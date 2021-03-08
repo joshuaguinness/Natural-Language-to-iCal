@@ -45,9 +45,5 @@ Section description TODO
 | Week 2 (11 – 17) | Module 2... |
 Exact dates are subject to change
 
-### Resources and References TODO
-Sections
-- Emil Sekerinski. CS 4TB3 Lecture Notes
-- https://icalendar.org/ - iCal standard
-- https://tools.ietf.org/html/rfc5545 - iCal standard (RFC 5545)
-- ....
+### Resources and References 
+There will be multiple resources we will use and refer to for the development of this system. The language that we will use to create this system will be JavaScript. The reason for this choice is a combination of both our experience with this language and the ease of integrating it with a web based front-end. For our domain knowledge, we will reference both the COMP SCI 4TB3 Lecture Notes by Emil Sekerinski, as well as the iCalendar (RFC 5545) specifications (icalendar.org & tools.ietf.org/html/rfc5545). From the lecture notes, sections on regular languages/expressions will help us develop a grammar for our system. In addition, sections on parsers will help in implementing our grammar. One last recourse we will utilize is a date-time library for creating event objects in our system. The Date library is a built-in object in JavaScript, and we will be using Mozilla’s MDN Web Docs on the JavaScript Date object to help us utilize it (developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date). These are the main resources that we will be using the develop our system. 
