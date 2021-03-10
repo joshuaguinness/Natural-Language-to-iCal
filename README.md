@@ -47,12 +47,22 @@ With this project, our group hopes to gain a better understanding of language pr
 
 
 ### Resources and References 
-Many resources will be used in the development of this system, both from the lectures and online documentation. For our domain knowledge, we will reference both the COMP SCI 4TB3 Lecture Notes by Emil Sekerinski, as well as the iCalendar (RFC 5545) specifications (icalendar.org & tools.ietf.org/html/rfc5545). From the lecture notes, sections on regular languages/expressions will help us to develop a grammar for our system to parse and split the input string into parts for processing.
+We expect to use many different resourcess during the development of this system, including lectures from class and various online sources.
 
-The converter will be created in JavaScript, due to both our experience with this language and the ease of integrating it with a web based front-end. Consequently, documentation from sources such as the Mozilla Developer Network (developer.mozilla.org/en-US/docs/Web/JavaScript) and W3Schools (w3schools.com/js) will be used.
+For our domain knowledge, we will reference both the lecture notes as well as the iCalendar (RFC 5545) specifications. From the lecture notes, the sections on regular languages and expressions will help us to develop a grammar for our system to parse and split the input string into parts for processing.
+- COMP SCI 4TB3 Lecture Notes by Emil Sekerinski
+- https://icalendar.org/
+- https://tools.ietf.org/html/rfc5545
 
-Since schedules inherently deal with dates and times, the built-in JavaScript date object in particular will be used extensively (developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date). This resource will help perform date-related calculations and to convert relative dates/times given by the user to an absolute date object, for instance:
-```js
+The converter will be created in JavaScript, due to both our experience with this language and the ease of integrating it with a web based front-end. Consequently, documentation from sources such as the Mozilla Developer Network and W3Schools will be used.
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript
+- https://www.w3schools.com/js/
+
+Since schedules inherently deal with dates and times, the built-in JavaScript date object in particular will be used extensively.
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+
+ This resource will help perform date-related calculations and to convert relative dates/times given by the user to an absolute date object, for example:
+ ```js
 "tomorrow" -> Date("March 10, 2021");
 ```
 
@@ -60,7 +70,7 @@ Since schedules inherently deal with dates and times, the built-in JavaScript da
 
 ##### Programming
 The system will be "modularized" such that each major function will be handled by a separate part of the program. The development work will be shared by all group members but managed by one person for a given module to ensure that it is of high quality.
-- HTML + JavaScript frontend: Jason Kim
+- Frontend HTML: Jason Kim
 - Splitting user input into component substrings: Arkin Modi
 - Convert component substrings to iCal fields: Joshua Guinness
 - Assembling final iCalendar file: Jason Kim
