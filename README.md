@@ -92,11 +92,11 @@ This is a proposed weekly schedule for how to finish the project before the Apri
 | Date | Work to be done |
 | ------ | ------ |
 | Week 0 | Project Proposal |
-| Week 1 (11 - 17) | Initial work on frontend, planning for how to parse user input & split into substrings & convert substrings to iCal fields |
-| Week 2 (18 - 24) | Finish up frontend, initial code for splitting user input into component substrings,  initial code for converting component substrings to iCal fields |
-| Week 3 (25 - 31) | Further coding for parsing user input and converting substrings to iCal fields, initial code for assembling final iCal file |
-| Week 4 (1 - 7) | Almost complete code for parsing user input and converting substrings to iCal fields, further coding for assembling final iCal file |
-| Week 5 (8 - 14) | Complete source code, finish test cases to ensure correctness of code, finish documentation, start and finish presentation slides, submit all deliverables on GitLab |
-| Week 6 (15 - 16) | Touch up on final presentation, practice presentation as a group, give final presentation|
+| Week 1 (3/11 - 3/17) | Initial work on frontend, planning for how to parse user input & split into substrings & convert substrings to iCal fields |
+| Week 2 (3/18 - 3/24) | Finish up frontend, initial code for splitting user input into component substrings,  initial code for converting component substrings to iCal fields |
+| Week 3 (3/25 - 3/31) | Further coding for parsing user input and converting substrings to iCal fields, initial code for assembling final iCal file |
+| Week 4 (4/1 - 4/7) | Almost complete code for parsing user input and converting substrings to iCal fields, further coding for assembling final iCal file |
+| Week 5 (4/8 - 4/14) | Complete source code, finish test cases to ensure correctness of code, finish documentation, start and finish presentation slides, submit all deliverables on GitLab |
+| Week 6 (4/15 - 4/16) | Touch up on final presentation, practice presentation as a group, give final presentation|
 
 Exact dates and progress on work are subject to change
