@@ -8,7 +8,6 @@ We will develop a system which converts a user’s schedule information from a n
 
 This system will allow users to easily create new calendar event files with the use of only their keyboard, providing information such as the event's name, date, and time together as part of one input string, instead of filling separate fields as in a traditional calendar application. 
 
-
 For example, natural language user input such as the following:
 ```js
 discuss group project at 4p next mon
@@ -30,6 +29,10 @@ There are a few closely related pieces of software to what we are trying to crea
 - https://www.microassist.com/software-tips/outlook-calendar-shortcuts-natural-language/ (Outlook supports natural language abbreviations when picking dates)
 - https://polymaths.blog/2018/06/fantastically-good-event-parser-for-drafts-5 (Natural language to events)
 
+Although all of these are similar to our project, and work within the same domain, our project will be unique because:
+- it will be platform independent
+- it will generate an iCal file that can be used anywhere or sent somewhere
+- it will not be limited to just date/time parsing but the entire submitted natural language calendar event
 
 ### Implementation Details
 The converter will be implemented using JavaScript, which will allow the program to run client-side within any web browser.
@@ -41,9 +44,11 @@ Converting from natural language will comprise three major steps:
 
 Additionally, the program will require an HTML frontend with which users will interact. The webpage will feature an input field and controls necessary to submit the natural language string and retrieve the output .ics file.
 
-The software will be tested to ensure that for a given input, the output is either a valid iCalendar event or an error message, in cases where the input contained nonsense or invalid components.
+This software will consist of unit tests for each module, as well as integration tests between the modules. The unit tests will ensure that each module is working correctly in isolation, and each function is performing its duties correctly. These tests will simply check whether an input matches a specified output, or whether the correct exception/error is raised. The integration tests will check whether the full flow is working correctly, from input to output. In these tests, a given input will be used and the expected iCal output will be compared with the actual iCal output to confirm the correctness of the system.
 
-With this project, our group hopes to gain a better understanding of language processing and conversion, particularly with natural languages with which everyone is familiar.
+This system will be documented in two ways. The first is documentation within the code. This will consist of comments and additional documentation of functions, and files. The second will be written documentation explaining how the parsing and conversion works, complete with diagrams about system architecture and how input flows through the system.
+
+With this project, our group hopes to gain a better understanding of language parsing and conversion, particularly with natural languages with which everyone is familiar. We also hope to develop something useful and make open source so that it can be extended, or expanded on later.
 
 
 ### Resources and References 
