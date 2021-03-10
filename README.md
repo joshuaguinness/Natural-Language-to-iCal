@@ -21,6 +21,18 @@ TIME 4:00 pm
 ```
 The actual output will be formatted according to the iCalendar specification and can be imported into most calendaring software.
 
+##### Closely Related Work
+There are a few closely related pieces of software to what we are trying to create. They are documented below.
+
+- http://quickcalapp.com/ and https://flexibits.com/fantastical (Third Party MacOS or iOS apps that allow users to add calender events using natural language)
+- MacOS Calendar (The MacOS calendar has a natural language to calendar event feature)
+- https://github.com/wanasit/chrono (Open source natural language date parser)
+- https://www.microassist.com/software-tips/outlook-calendar-shortcuts-natural-language/ (Outlook supports natural language abbreviations when picking dates)
+- https://polymaths.blog/2018/06/fantastically-good-event-parser-for-drafts-5 (Natural language to events)
+
+
+##### Insight We Hope To Gain From It TODO
+
 
 ### Implementation Details
 The converter will be implemented using JavaScript, which will allow the program to run client-side within any web browser.
@@ -35,6 +47,9 @@ Additionally, the program will require an HTML frontend with which users will in
 The software will be tested to ensure that for a given input, the output is either a valid iCalendar event or an error message, in cases where the input contained nonsense or invalid components.
 
 With this project, our group hopes to gain a better understanding of language processing and conversion, particularly with natural languages with which everyone is familiar.
+
+##### How It Will Be Documented TODO
+
 
 
 ### Resources and References 
