@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="UTF-8">
+	<head>
+		<title>Natural Language to iCalendar</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<meta name="Description" content="COMP SCI 4TB3 Project"/>
+		<meta name="viewport" content="width=820">
+		<link href="/res/favicon.png" type="image/x-icon" rel="shortcut icon" />
+		<link rel="stylesheet" type="text/css" href="/res/style.css"/>
+		<script type="text/javascript" src="/cd_files/foo.js"></script>
+	</head>
+    
+<script>
+function myFunction() {
+  var x = document.getElementById("myInput").value;
+  document.getElementById("output-summary").innerHTML = "SUMMARY: " + x;
+}
+</script>
+    
+	<body>
+		<div id="container">
+			<div>
+				<h1>Natural Language to iCalendar</h1>
+				<input type="text" id="myInput" placeholder="Enter something!" oninput="myFunction()">
+			</div>
+			<div id="output" class="hidden">
+				<h3 id="output-title">System Interpretation</h3>
+				<ul id="output-bullets">
+					<li id="output-summary">SUMMARY:</li>                    
+					<li id="output-date">DATESTART:</li>                 
+					<li id="output-time">TIMESTART:</li>                 
+					<li id="output-date">SOMEOTHERFIELD:</li>
+				</ul>
+			</div>
+            <button type="button" onclick="alert('Maybe later :)')">Get .ics</button>
+		</div>			
+        <h5>COMP SCI 4TB3 Project - Group 9: Joshua Guinness, Arkin Modi, Jason Kim. 2021 Winter.</h5>
+	</body>
+</html>
