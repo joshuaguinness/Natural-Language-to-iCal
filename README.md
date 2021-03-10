@@ -30,7 +30,7 @@ Converting from natural language will comprise three major steps:
 - Converting component substrings into matching iCalendar fields
 - Formatting output per iCalendar specification
 
-Additionally, the program will require an HTML frontend with which users will interact. The simple webpage will feature a prominent input field and controls necessary to submit the natural language string and retrieve the output .ics file.
+Additionally, the program will require an HTML frontend with which users will interact. The webpage will feature an input field and controls necessary to submit the natural language string and retrieve the output .ics file.
 
 Finally, the project will be documented and presented... TODO ELABORATE
 
