@@ -31,9 +31,6 @@ There are a few closely related pieces of software to what we are trying to crea
 - https://polymaths.blog/2018/06/fantastically-good-event-parser-for-drafts-5 (Natural language to events)
 
 
-##### Insight We Hope To Gain From It TODO
-
-
 ### Implementation Details
 The converter will be implemented using JavaScript, which will allow the program to run client-side within any web browser.
 
@@ -47,9 +44,6 @@ Additionally, the program will require an HTML frontend with which users will in
 The software will be tested to ensure that for a given input, the output is either a valid iCalendar event or an error message, in cases where the input contained nonsense or invalid components.
 
 With this project, our group hopes to gain a better understanding of language processing and conversion, particularly with natural languages with which everyone is familiar.
-
-##### How It Will Be Documented TODO
-
 
 
 ### Resources and References 
