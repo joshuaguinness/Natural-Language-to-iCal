@@ -87,7 +87,7 @@ As with the programming, group members will share the work on all parts of the p
 - Final Presentation: Joshua Guinness
 
 ### Weekly Schedule
-This is a proposed weekly schedule for how to finish the project before the April 12th deadline.
+This is a proposed weekly schedule for how to finish the project before the April 12th deadline. Note: The numbers in brackets are the days of the month.
 
 | Date | Work to be done |
 | ------ | ------ |
