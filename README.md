@@ -35,6 +35,10 @@ Additionally, the program will require an HTML frontend with which users will in
 Finally, the project will be documented and presented... TODO ELABORATE
 
 
+### Resources and References 
+There will be multiple resources we will use and refer to for the development of this system. The language that we will use to create this system will be JavaScript. The reason for this choice is a combination of both our experience with this language and the ease of integrating it with a web based front-end. For our domain knowledge, we will reference both the COMP SCI 4TB3 Lecture Notes by Emil Sekerinski, as well as the iCalendar (RFC 5545) specifications (icalendar.org & tools.ietf.org/html/rfc5545). From the lecture notes, sections on regular languages/expressions will help us develop a grammar for our system. In addition, sections on parsers will help in implementing our grammar. One last recourse we will utilize is a date-time library for creating event objects in our system. The Date library is a built-in object in JavaScript, and we will be using Mozilla’s MDN Web Docs on the JavaScript Date object to help us utilize it (developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date). These are the main resources that we will be using the develop our system. 
+
+
 ### Division of Work
 
 #### Final Deliverables
@@ -52,6 +56,7 @@ Although the overall source code will be worked on by all group members, each me
 - Convert component substrings to iCal fields: Joshua Guinness 
 - Assembling final iCal file: Jason Kim 
 
+
 ### Weekly Schedule
 This is a proposed weekly schedule for how to finish the project before the April 12th deadline.
 
@@ -66,6 +71,3 @@ This is a proposed weekly schedule for how to finish the project before the Apri
 | Week 6 (15 - 16) | Touch up on final presentation, practise presentation as a group, give final presentation|
 
 Exact dates and progress on work are subject to change
-
-### Resources and References 
-There will be multiple resources we will use and refer to for the development of this system. The language that we will use to create this system will be JavaScript. The reason for this choice is a combination of both our experience with this language and the ease of integrating it with a web based front-end. For our domain knowledge, we will reference both the COMP SCI 4TB3 Lecture Notes by Emil Sekerinski, as well as the iCalendar (RFC 5545) specifications (icalendar.org & tools.ietf.org/html/rfc5545). From the lecture notes, sections on regular languages/expressions will help us develop a grammar for our system. In addition, sections on parsers will help in implementing our grammar. One last recourse we will utilize is a date-time library for creating event objects in our system. The Date library is a built-in object in JavaScript, and we will be using Mozilla’s MDN Web Docs on the JavaScript Date object to help us utilize it (developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date). These are the main resources that we will be using the develop our system. 
