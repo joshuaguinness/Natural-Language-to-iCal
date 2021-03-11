@@ -12,9 +12,50 @@
 	</head>
     
 <script>
-function myFunction() {
-  var x = document.getElementById("myInput").value;
-  document.getElementById("output-summary").innerHTML = "SUMMARY: " + x;
+//Function to show recognized fields in real time (not necessarily in exact iCal format)
+function liveUpdate() {
+  var x = document.getElementById("userInput").value;  
+  document.getElementById("output-summary").innerHTML = splitInput(x);
+}
+
+//Function to split up input string into parts by matching keywords/patterns between fields
+function splitInput(input) {
+  var input = input.trim(); //remove leading/trailing whitespace from input
+
+  var splitted = input.split('at ');
+  var first = splitted[0];
+  var second = splitted[1];
+  
+  if (!second)
+  second = "No date/time found in input"
+  
+  var output = 'SUMMRY: ' + first + '<br>DATE: ' + second;
+  return output;
+}
+
+//Convert date/time from input into date object
+function parseDate(input) {
+  var input = input.toLowerCase();
+  
+  //if (input == "tomorrow")
+  //output = date.now + 1 day //pseudocode
+  //else if (input == "...")
+  //output = something
+  
+  return output;
+}
+
+
+//Generate properly formatted .ICS file (once user hits enter or clicks submit btn
+function generateICS(input) {
+  var input = input.toLowerCase();
+  
+  //if (input == "tomorrow")
+  //output = date.now + 1 day //pseudocode
+  //else if (input == "...")
+  //output = something
+  
+  return output;
 }
 </script>
     
@@ -22,15 +63,17 @@ function myFunction() {
 		<div id="container">
 			<div>
 				<h1>Natural Language to iCalendar</h1>
-				<input type="text" id="myInput" placeholder="Enter something!" oninput="myFunction()">
+				<input type="text" id="userInput" placeholder="Enter something!" size="50" oninput="liveUpdate()">
+                
+            <button type="button" onclick="document.getElementById('userInput').value = 'Submit lab at 1055PM Thursday'; liveUpdate()">Sample1</button>
+            <button type="button" onclick="document.getElementById('userInput').value = 'Dinner at 7p'; liveUpdate()">Sample2</button>
+            <button type="button" onclick="document.getElementById('userInput').value = 'Take out trash on Tuesday'; liveUpdate()">Sample3</button>
+            
 			</div>
 			<div id="output" class="hidden">
 				<h3 id="output-title">System Interpretation</h3>
 				<ul id="output-bullets">
-					<li id="output-summary">SUMMARY:</li>                    
-					<li id="output-date">DATESTART:</li>                 
-					<li id="output-time">TIMESTART:</li>                 
-					<li id="output-date">SOMEOTHERFIELD:</li>
+					<li id="output-summary">SUMMARY:</li>
 				</ul>
 			</div>
             <button type="button" onclick="alert('Maybe later :)')">Get .ics</button>
