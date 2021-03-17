@@ -1,35 +1,82 @@
+<!-- Demo website for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter -->
+<!-- See parser.js for main converter program code. The resources directory contains supporting files/framework/libraries -->
+<!-- This page makes use of the following open source libraries and frameworks:  -->
+
 <!DOCTYPE html>
 <html lang="en">
-    <meta charset="UTF-8">
 	<head>
 		<title>Natural Language to iCalendar</title>
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 		<meta name="Description" content="COMP SCI 4TB3 Project"/>
-		<meta name="viewport" content="width=820">
-		<link href="/res/favicon.png" type="image/x-icon" rel="shortcut icon" />
-		<link rel="stylesheet" type="text/css" href="/res/style.css"/>
-		<script type="text/javascript" src="/cd_files/foo.js"></script>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link type="image/x-icon" rel="shortcut icon" href="resources/favicon.png"/>
+		<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure.css">
+		<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+		<link rel="stylesheet" href="resources/style.css"/>
+		<script type="text/javascript" src="parser.js"></script>
 	</head>
-    
-	<body>
-		<div id="container">
-			<div>
-				<h1>Natural Language to iCalendar</h1>
-				<input type="text" id="userInput" placeholder="Enter something!" size="50" oninput="liveUpdate()">
-                
-            <button type="button" onclick="document.getElementById('userInput').value = 'Submit lab at 1055PM Thursday'; liveUpdate()">Sample1</button>
-            <button type="button" onclick="document.getElementById('userInput').value = 'Dinner at 7p'; liveUpdate()">Sample2</button>
-            <button type="button" onclick="document.getElementById('userInput').value = 'Take out trash on Tuesday'; liveUpdate()">Sample3</button>
-            
-			</div>
-			<div id="output" class="hidden">
-				<h3 id="output-title">System Interpretation</h3>
-				<ul id="output-bullets">
-					<li id="output-summary">SUMMARY:</li>
+	
+	<div class="header">
+		<div class="home-menu">
+			<h1 class="content-head content-head-ribbon"><center>Natural Language to iCalendar Converter</center></h1>
+		</div>
+	</div>
+	
+	<div class="ribbon l-box-lrg pure-g">
+		<div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-2-5">
+			<img width="300" alt="File Icons" class="pure-img-responsive" src="https://purecss.io/img/common/file-icons.png">
+		</div>
+		<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-3-5">			
+			<h2 class="content-head content-head-ribbon">COMP SCI 4TB3 Project Demo Page</h2>
+			
+			<form class="pure-form">
+				<input type="text" id="userInput" class="pure-form pure-input-rounded" placeholder="Enter something!" size="50" oninput="liveUpdate()" onkeydown = "if (event.keyCode == 13) { generateICS(); event.preventDefault();}">
+				<button type="button" class="pure-button" onclick="document.getElementById('userInput').value = 'Submit lab at 1055PM Thursday'; liveUpdate()">Sample1</button>
+				<button type="button" class="pure-button" onclick="document.getElementById('userInput').value = 'Dinner at 7p'; liveUpdate()">Sample2</button>
+				<button type="button" class="pure-button" onclick="document.getElementById('userInput').value = 'Take out trash on Tuesday'; liveUpdate()">Sample3</button>
+			</form>						
+			
+			<div id="output" hidden>			
+				<ul id="liveOutput">
 				</ul>
+				<button type="button" class="pure-button pure-button-primary" onclick="generateICS()">Get .ics</button>
 			</div>
-            <button type="button" onclick="alert('Maybe later :)')">Get .ics</button>
-		</div>			
-        <h5>COMP SCI 4TB3 Project - Group 9: Joshua Guinness, Arkin Modi, Jason Kim. 2021 Winter.</h5>
-	</body>
+			
+			<p>
+				Type your event information above to view a real-time interpretation. Clicking "Get .ics" generates an iCalendar file for the event.
+			</p>
+		</div>
+	</div>
+	
+	
+	<div class="content">	
+		<h2 class="content-head is-center">About the Project</h2>	
+		<div class="pure-g">
+            <div class="l-box-lrg pure-u-1 pure-u-md-2-5">
+				<p>
+					This webpage demonstrates our group's Natural Language to iCalendar file converter. Implemented in JavaScript, the program runs within the browser.
+				</p>
+			</div>
+			
+            <div class="l-box-lrg pure-u-1 pure-u-md-3-5">
+                <h4>Source Code</h4>
+                <p>
+					All program source code is available in our group's project repository.
+				</p>
+				<a class="pure-button" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9">Go to GitLab</a>
+				
+                <h4>More Information</h4>
+                <p>
+					For additional information on our project, please refer to our project proposal, available in the repository as the readme file.
+				</p>
+				<a class="pure-button" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/blob/master/README.md">View Proposal</a>
+			</div>
+		</div>
+	</div>
+	
+	<div class="footer is-center">
+		COMP SCI 4TB3 Project - Group 9: Joshua Guinness, Arkin Modi, Jason Kim. McMaster University, 2021 Winter.
+	</div>
+	
+</body>
 </html>
