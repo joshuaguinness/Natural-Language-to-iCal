@@ -6,6 +6,11 @@
 //
 // ==========================================================
 
+// Global variables
+var eventSummary, eventDescription, eventBegin, eventEnd // Vars for event field data
+var inputGood // Whether user's input is acceptable
+
+
 // Patterns to match from user's input
 var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b"
 var regExMonth = "\\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\b"
@@ -17,7 +22,7 @@ function liveUpdate() {
 	var userInput = document.getElementById("userInput").value; // Get user's input from textbox
 	document.getElementById("liveOutput").innerHTML = splitInput(userInput); // Call parsing functions and display returned value on page
 	
-	if (userInput) // ide live output area if input is empty
+	if (userInput) // Hide live output area if input is empty
 	document.getElementById("output").hidden = false;
 	else
 	document.getElementById("output").hidden = true;
@@ -26,16 +31,45 @@ function liveUpdate() {
 
 // Function to split up input string into parts by matching keywords/patterns between fields
 function splitInput(input) {
-	var input = input.trim(); //remove leading/trailing whitespace from input
+	inputGood = 1 // Initially assume user's input is acceptable
+	//var input = input.toLowerCase(); // TODO recognize split keywords regardless of capitalization (but without modifying original string)
 	
-	var splitted = input.split(' at ');
-	var first = splitted[0];
-	var second = splitted[1];	
+	var splitted = input.split(' on ');
+	eventSummary = splitted[0].trim();
 	
-	var output = '<li id="output-summary"><b>SUMMARY: </b>' + first + 
-	'</li><li id="output-date"><b>DATE: </b>' + parseDate(second) + 
-	'</li><li id="output-misc"><b>Some other field: </b>...' + 
-	'</li>';
+	if (!splitted[1]) { // If split unsuccessful (ie, input contained no substring)
+		inputGood = 0 // Mark user input as unacceptable
+		eventBegin = error("Could not find summary-date separator (Error S1)")
+		eventEnd = ""
+		eventDescription = ""
+	}
+	else { // If split successful, save first half as event summary
+		splitted = splitted[1].split('. ');
+		eventBegin = parseDate(splitted[0]);
+		eventEnd = parseDate(splitted[0]); // TODO: Keep same if single-day event. If datetime range is given, set this to end		
+		eventDescription = splitted[1];		
+		}
+	
+	if (!eventSummary)
+	eventSummary = "Untitled Event"	
+	if (!eventBegin) // Summary-Date separator substring not found
+	eventBegin = "No date"
+	if (!eventEnd)
+	eventEnd = "No date"
+	if (!eventDescription)
+	eventDescription = "No description"	
+	
+	var output = '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
+	'</span></li><li id="output-date-start">Date Start: <span class="output">' + eventBegin + 
+	'</span></li><li id="output-date-end">Date End: <span class="output">' + eventEnd + 
+	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
+	'</span></li>';
+	
+	if (!inputGood)
+	document.getElementById("btnDownload").disabled = true; 
+	else
+	document.getElementById("btnDownload").disabled = false; 
+	
 	return output;
 }
 
@@ -47,38 +81,42 @@ function parseDate(input) {
 	
 	if (input)
 	var date = new Date(input); // Create date object with input
-	else
-	return error(1, input) // If no input received, return err "No date/time found in input (Error 1)"
+	else {		
+		inputGood = 0 // Mark user input as unacceptable
+		return error("No date/time found in input (Error D1)") // If no input received, return Error 1
+	}
 	
-	if (date == 'Invalid Date')
-	var output = error(2, input) // If date object is invalid, return err "A date value was received but couldn't be parsed (Error 2)"
+	if (date == 'Invalid Date') {
+		var output = error("Could not parse <i>" + input + "</i> as a date (Error D2)") // If date object is invalid, return Error 2)	
+		inputGood = 0 // Mark user input as unacceptable
+	}
 	else
 	var output = date;
-		
+	
 	return output;
 }
 
 
-// Generate properly formatted .ICS file (once user hits enter or clicks submit btn
-function generateICS() {
-	alert('TODO')
-	//TODO
+// Generate properly formatted .ICS file (once user hits enter or clicks submit btn. Arg 1 = download, arg 0 = view only
+function generateICS(arg) {
+	// Build the iCalendar file using ics.js library and parsed data
+	icalOutput = ics();
+    icalOutput.addEvent(eventSummary, eventDescription, '', eventBegin, eventEnd);
+	
+	// Give user the .ics or display the preview
+	if (arg) {
+		if (inputGood) // Download only if the input was acceptable
+		icalOutput.download(eventSummary);
+	}
+	else
+	viewOnly(icalOutput);
 	return;
 }
 
 
-
-// Error code output strings
-function error(errorCode, errorString) {	
-	switch (errorCode) {
-		case 1:
-		errorString = "No date/time found in input (Error 1)";
-		break;
-		case 2:
-		errorString = "Could not parse <i>" + errorString + "</i> as a date (Error 2)";
-		break;
-		default:
-		errorString = "Sorry, an unknown error occurred (You should never see this)";
-	}	
-	return errorString;
+// Format error strings in red
+function error(errorString) {	
+	if (!errorString) // Default text if no error msg received
+	errorString = 'Sorry, an unknown error occurred (You should never see this)';
+	return '<span class="output-error">' + errorString + '</span>';;
 }
