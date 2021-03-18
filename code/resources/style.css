@@ -33,6 +33,22 @@
 	/* this is a light blue */
 }
 
+.output-error {
+	color: red;
+	/* 4TB3 red text for errors */
+}
+
+.output {
+	color: white;
+	/* 4TB3 white for regular output */
+}
+
+button:disabled {
+  cursor: not-allowed;
+  pointer-events: all !important;
+}
+
+
 
 * {
     -webkit-box-sizing: border-box;
@@ -121,6 +137,14 @@ label {
     font-size: 120%;
 }
 
+.pure-button-primary2 {
+    background: lightgray;
+    color: #1f8dd6;
+    border-radius: 5px;
+    font-size: 120%;
+}
+
+
 a.pure-button-primary {
     background: white;
     color: #1f8dd6;
@@ -128,6 +152,16 @@ a.pure-button-primary {
     font-size: 120%;
 }
 
+.pure-button-gray {
+    background: #8da5b4;
+    color: white;
+    border-radius: 5px;
+    font-size: 90%;
+}
+
+.pure-button-blue {
+    font-size: 90%;
+}
 
 /*
 	* -- MENU STYLES --
@@ -260,11 +294,13 @@ a.pure-button-primary {
 .ribbon {
     background: #2d3e50;
     color: #aaa;
+    width: 100%;
 }
 
 /* This is the class used for the footer */
 .footer {
     background: #111;
+    color: #aaa;
     position: fixed;
     bottom: 0;
     width: 100%;
