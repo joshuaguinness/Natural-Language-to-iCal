@@ -1,6 +1,6 @@
 <!-- Demo website for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter -->
 <!-- See parser.js for main converter program code. The resources directory contains supporting files/framework/libraries -->
-<!-- This page makes use of the following open source libraries and frameworks:  -->
+<!-- This page makes use of the following open source libraries and frameworks: ics.js, pure.io, TODO -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +16,7 @@
 		<script type="text/javascript" src="resources/ics.js"></script>
 		<script type="text/javascript" src="parser.js"></script>
 		
-		<!-- Temporary--force browser to ignore cache during development -->
+		<!-- Temporary: force browser to ignore cache during development -->
 		<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
 		<meta http-equiv="cache-control" content="max-age=0" />
 		<meta http-equiv="expires" content="0" />
@@ -33,72 +33,59 @@
 	
 	<div class="ribbon l-box-lrg pure-g">
 		<div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-3-8">
-			<img width="300" alt="File Icons" class="pure-img-responsive" src="https://purecss.io/img/common/file-icons.png">
+			<img width="300" class="pure-img-responsive" src="https://purecss.io/img/common/file-icons.png">
 		</div>
 		<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-6-8">
 			<h2 class="content-head content-head-ribbon">COMP SCI 4TB3 Project Demo</h2>
-			<p>
-				Type your event information to view a real-time conversion, or try one of the samples.
-			</p>
+			<p>	Type your event information to view a real-time conversion, or try one of the samples. </p>
 			
 			<form class="pure-form">
 				<input type="text" id="userInput" class="pure-form pure-input-rounded" placeholder="Enter something!" size="50" oninput="liveUpdate()" onkeydown = "if (event.keyCode == 13) { generateICS(1); event.preventDefault();}">
 				Sample Inputs: 
-				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Submit lab at 1055PM Thursday. Don\'t forget!'; liveUpdate()">1</button>
-				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Project meeting on 3/21/21 12:34:56. Bring notes for presentation'; liveUpdate()">2</button>
+				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'CS 4TB3 Midterm 2 on 4/6/21'; liveUpdate()">1</button>
+				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Submit lab at 1055PM Thursday'; liveUpdate()">2</button>
 				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Take out trash on Tuesday. Including recycling.'; liveUpdate()">3</button>
+				<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is an invalid input because there is no date/time.'; liveUpdate()">4</button>
 			</form>	
 			
 			<div id="output" hidden>			
 				<ul id="liveOutput">
 				</ul>
+				<p id="helpText"> </p>
 				<button type="button" id="btnDownload" class="pure-button pure-button-primary" onclick="generateICS(1)">Download .ics</button>
 				<button type="button" id="btnPreview" class="pure-button pure-button-primary" onclick="generateICS(0)">Preview .ics</button>
-				<p>
-					Pressing download will generate an iCalendar file for your event.
-				</p>
 			</div>
 		</div>
 	</div>
-	
 	
 	<div class="content">	
 		<h2 class="content-head is-center">About the Project</h2>	
 		<div class="pure-g">
-            <div class="l-box-lrg pure-u-1 pure-u-md-1-2">
-				<p>
-					This webpage demonstrates our group's final project, which converts a user’s schedule information from a natural language input to an output in the standard iCalendar (.ics) format.
-				</p>
-				<p>
-					This system will allow users to easily create new calendar event files with the use of only their keyboard, providing information such as the event's name, date, and time together as part of one input string.
-				</p>
+			<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
+				<p>	This webpage demonstrates our group's final project, which converts a user’s schedule information from a natural language input to an output in the standard iCalendar (.ics) format. </p>
+				<p>	This system will allow users to easily create new calendar event files with the use of only their keyboard, providing information such as the event's name, date, and time together as part of one input string. </p>
 				<p>
 					<a href="ver/1/">Ver 1</a>
 					<a href="ver/2/">Ver 2</a>
 					<a href="ver/3/">Ver 3</a>
-				</p>
-			</div>
-			
-            <div class="l-box-lrg pure-u-1 pure-u-md-1-2">
-                <h4>Source Code</h4>
-                <p>
-					All program source code is available in our group's project repository.
-				</p>
-				<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9">Go to GitLab</a>
-				<br/><br/>
+					</p>
+				</div>
 				
-                <h4>More Information</h4>
-                <p>
-					For additional information on our project, please refer to our project proposal, available in the repository as the readme file.
-				</p>
-				<a class="pure-button pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/blob/master/README.md">View Proposal</a>
+				<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
+					<h4>Source Code</h4>
+					<p>	All program source code is available in our group's project repository.	</p>
+					<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9">Go to GitLab</a>
+					<br/><br/>
+					
+					<h4>More Information</h4>
+					<p> For additional information on our project, please refer to our project proposal, available in the repository as the readme file. </p>
+					<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/blob/master/README.md">View Proposal</a>
+				</div>
 			</div>
 		</div>
-	</div>
-	
-	<div class="footer is-center">
-		COMP SCI 4TB3 Project - Group 9: Joshua Guinness, Arkin Modi, Jason Kim. McMaster University, 2021 Winter.
-	</div>
-	
-</body>
+		
+		<div class="footer is-center">
+			COMP SCI 4TB3 Project - Group 9: Joshua Guinness, Arkin Modi, Jason Kim. McMaster University, 2021 Winter.
+		</div>	
+	</body>
 </html>
