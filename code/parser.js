@@ -65,10 +65,14 @@ function splitInput(input) {
 	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
 	'</span></li>';
 	
-	if (!inputGood)
-	document.getElementById("btnDownload").disabled = true; 
-	else
+	if (!inputGood) {
+	document.getElementById("btnDownload").disabled = true;
+	document.getElementById("helpText").innerHTML = 'Please fix the issues above to download your iCalendar file.';
+	}
+	else {
 	document.getElementById("btnDownload").disabled = false; 
+	document.getElementById("helpText").innerHTML = 'Press Enter or click Download to generate an iCalendar file for your event.';
+	}
 	
 	return output;
 }
