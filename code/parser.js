@@ -7,7 +7,7 @@
 // ==========================================================
 
 // Global variables
-var eventSummary, eventDescription, eventBegin, eventEnd // Vars for event field data
+var eventSummary, eventBegin, eventEnd, eventDescription // Vars for event field data
 var inputGood // Whether user's input is acceptable
 
 
@@ -19,83 +19,75 @@ var relativeDate = "((?:next|last|this) (?:week|month|year)|tom(?:orrow)?|tmrw|t
 
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
 function liveUpdate() {
-	var userInput = document.getElementById("userInput").value; // Get user's input from textbox
-	document.getElementById("liveOutput").innerHTML = splitInput(userInput); // Call parsing functions and display returned value on page
+	// Get user's input from textbox and initially assume it's acceptable
+	var userInput = document.getElementById("userInput").value;
+	inputGood = 1;
 	
 	if (userInput) // Hide live output area if input is empty
 	document.getElementById("output").hidden = false;
 	else
 	document.getElementById("output").hidden = true;
+	
+	// Call parsing functions
+	splitInput(userInput);
+	
+	// Display returned value on page
+	document.getElementById("liveOutput").innerHTML = formatHTML(eventSummary, eventBegin, eventEnd, eventDescription);
 }
 
 
 // Function to split up input string into parts by matching keywords/patterns between fields
 function splitInput(input) {
-	inputGood = 1 // Initially assume user's input is acceptable
-	//var input = input.toLowerCase(); // TODO recognize split keywords regardless of capitalization (but without modifying original string)
 	
+	// Split summary from rest of input
 	if (input.search(' on ') > 0){
-		var splitted = input.split( 'on' )
-	} else if (input.search(' at ') > 0){
-		var splitted = input.split( 'at' )
-	}
-
-	eventSummary = splitted[0].trim();
-	
-	if (!splitted[1]) { // If split unsuccessful (ie, input contained no substring)
-		inputGood = 0 // Mark user input as unacceptable
+		console.log("on")
+		var splitted = input.split( ' on ' )
+	} 
+	else if (input.search(' at ') > 0){
+		console.log("at")
+		var splitted = input.split( ' at ' )
+	} 
+	else { // If no summary-date separator in input, error
+		eventSummary = input
 		eventBegin = error("Could not find summary-date separator (Error S1)")
 		eventEnd = ""
 		eventDescription = ""
 	}
-	else { // If split successful, save first half as event summary
-		splitted = splitted[1].split('. ');
+	
+	if (inputGood) { // Continue parsing rest of input if summary was split okay
+		eventSummary = splitted[0].trim();
+		
+		splitted = splitted[1].split('. '); // Split date from rest of input
 		eventBegin = parseDate(splitted[0]);
 		eventEnd = parseDate(splitted[0]); // TODO: Keep same if single-day event. If datetime range is given, set this to end		
-		eventDescription = splitted[1];		
-		}
+		eventDescription = splitted[1];
+	}
 	
+	// Store notices if certain fields are missing from input
 	if (!eventSummary)
 	eventSummary = "Untitled Event"	
-	if (!eventBegin) // Summary-Date separator substring not found
+	if (!eventBegin)
 	eventBegin = "No date"
 	if (!eventEnd)
 	eventEnd = "No date"
 	if (!eventDescription)
 	eventDescription = "No description"	
 	
-	var output = '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
-	'</span></li><li id="output-date-start">Date Start: <span class="output">' + eventBegin + 
-	'</span></li><li id="output-date-end">Date End: <span class="output">' + eventEnd + 
-	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
-	'</span></li>';
-	
-	if (!inputGood) {
-	document.getElementById("btnDownload").disabled = true;
-	document.getElementById("helpText").innerHTML = 'Please fix the issues above to download your iCalendar file.';
-	}
-	else {
-	document.getElementById("btnDownload").disabled = false; 
-	document.getElementById("helpText").innerHTML = 'Press Enter or click Download to generate an iCalendar file for your event.';
-	}
-	
-	return output;
+	return;
 }
 
 
 // Convert date/time from input into date object
 function parseDate(input) {
-	//if (input == "tomorrow")
-	//output = date.now + 1 day
-
 	const referenceDate = new Date()
-
-	dayMatchArray = input.match(regExDayofWeek)
+	dayMatchArray = input.toLowerCase().match(regExDayofWeek) //Convert date to lowercase then match w/ regex
 	
 	if (input){
 		if (dayMatchArray){
 			var date = new Date()
 			dayOfWeek = dayMatchArray[0]
+			dayOfWeek = dayOfWeek.toLowerCase()
 			var numberOfWeek;
 			switch(dayOfWeek){
 				case "sunday": numberOfWeek = 0; break;
@@ -108,20 +100,18 @@ function parseDate(input) {
 			}
 			if (numberOfWeek > referenceDate.getDay()){
 				date.setDate(date.getDate() + (numberOfWeek - date.getDay()))
-			} else {
+				} else {
 				date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek))
 			}
-		} else {
+			} else {
 			var date = new Date(input); // Create date object with input
 		}
-	} else {		
-		inputGood = 0 // Mark user input as unacceptable
+		} else {
 		return error("No date/time found in input (Error D1)") // If no input received, return Error 1
 	}
-
+	
 	if (date == 'Invalid Date') {
-		var output = error("Could not parse <i>" + input + "</i> as a date (Error D2)") // If date object is invalid, return Error 2)	
-		inputGood = 0 // Mark user input as unacceptable
+		var output = error("Could not parse <i>" + input + "</i> as a date (Error D2)") // If date object is invalid, return Error 2)
 	}
 	else
 	var output = date;
@@ -130,11 +120,18 @@ function parseDate(input) {
 }
 
 
-// Generate properly formatted .ICS file (once user hits enter or clicks submit btn. Arg 1 = download, arg 0 = view only
-function generateICS(arg) {
+
+// Generate properly formatted .ICS file (once user hits enter or clicks download btn. Arg 1 = download, arg 0 = view only
+function generateICS(arg) {	
+	// If no description, use empty string for file rather than "No description"
+	if (eventDescription == "No description")
+	var icsDescription = "";
+	else 
+	var icsDescription = eventDescription;
+	
 	// Build the iCalendar file using ics.js library and parsed data
 	icalOutput = ics();
-    icalOutput.addEvent(eventSummary, eventDescription, '', eventBegin, eventEnd);
+    icalOutput.addEvent(eventSummary, icsDescription, '', eventBegin, eventEnd);
 	
 	// Give user the .ics or display the preview
 	if (arg) {
@@ -147,8 +144,31 @@ function generateICS(arg) {
 }
 
 
+// Format live output HTML
+function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {	
+	var output = '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
+	'</span></li><li id="output-date-start">Date Start: <span class="output">' + eventBegin + 
+	'</span></li><li id="output-date-end">Date End: <span class="output">' + eventEnd + 
+	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
+	'</span></li>';
+	
+	// Disable download button if the input is unacceptable and update help text
+	if (!inputGood) {
+		document.getElementById("btnDownload").disabled = true;
+		document.getElementById("helpText").innerHTML = 'Please fix the issues above to download your iCalendar file.';
+	}
+	else {
+		document.getElementById("btnDownload").disabled = false; 
+		document.getElementById("helpText").innerHTML = 'Press Enter or click Download to generate an iCalendar file for your event.';
+	}
+	
+	return output
+}
+
+
 // Format error strings in red
-function error(errorString) {	
+function error(errorString) {
+	inputGood = 0 // Mark user input as unacceptable
 	if (!errorString) // Default text if no error msg received
 	errorString = 'Sorry, an unknown error occurred (You should never see this)';
 	return '<span class="output-error">' + errorString + '</span>';;
