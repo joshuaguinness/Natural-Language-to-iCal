@@ -84,10 +84,10 @@ function parseDate(input) {
 	dayMatchArray = input.toLowerCase().match(regExDayofWeek) //Convert date to lowercase then match w/ regex
 	
 	if (input){
-		if (dayMatchArray){
+		if (dayMatchArray){ 
+			// If input matches regex, manually create date object (TODO: set time to 00:00:00? Currently uses current time)
 			var date = new Date()
 			dayOfWeek = dayMatchArray[0]
-			dayOfWeek = dayOfWeek.toLowerCase()
 			var numberOfWeek;
 			switch(dayOfWeek){
 				case "sunday": numberOfWeek = 0; break;
@@ -100,23 +100,22 @@ function parseDate(input) {
 			}
 			if (numberOfWeek > referenceDate.getDay()){
 				date.setDate(date.getDate() + (numberOfWeek - date.getDay()))
-				} else {
-				date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek))
-			}
-			} else {
-			var date = new Date(input); // Create date object with input
+			} 
+			else
+			date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek))
+			
 		}
-		} else {
-		return error("No date/time found in input (Error D1)") // If no input received, return Error 1
-	}
+		else 
+		var date = new Date(input); // If input doens't match regex, try to create date object directly
+	} 
+	else
+	return error("No date/time found in input (Error D1)") // If blank date arg received, Error
 	
 	if (date == 'Invalid Date') {
-		var output = error("Could not parse <i>" + input + "</i> as a date (Error D2)") // If date object is invalid, return Error 2)
+		return error("Could not parse <i>" + input + "</i> as a date (Error D2)") // If date object is invalid, Error
 	}
-	else
-	var output = date;
 	
-	return output;
+	return date;
 }
 
 
@@ -152,7 +151,7 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
 	'</span></li>';
 	
-	// Disable download button if the input is unacceptable and update help text
+	// Disable download button if the current input is unacceptable and update help text
 	if (!inputGood) {
 		document.getElementById("btnDownload").disabled = true;
 		document.getElementById("helpText").innerHTML = 'Please fix the issues above to download your iCalendar file.';
@@ -166,10 +165,12 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 }
 
 
-// Format error strings in red
+// Format error strings in red. Called by splitInput() and parseDate() when an error occurs
 function error(errorString) {
-	inputGood = 0 // Mark user input as unacceptable
-	if (!errorString) // Default text if no error msg received
+	inputGood = 0 // Mark user input as unacceptable once error occurs
+	
+	// Format HTML error msg with CSS class
+	if (!errorString) // If blank argument received, use default error message
 	errorString = 'Sorry, an unknown error occurred (You should never see this)';
 	return '<span class="output-error">' + errorString + '</span>';;
 }
