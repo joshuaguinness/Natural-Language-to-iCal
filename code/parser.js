@@ -34,7 +34,14 @@ function splitInput(input) {
 	inputGood = 1 // Initially assume user's input is acceptable
 	//var input = input.toLowerCase(); // TODO recognize split keywords regardless of capitalization (but without modifying original string)
 	
-	var splitted = input.split(' on ');
+	if (input.search(' on ') > 0){
+		console.log("on")
+		var splitted = input.split( 'on' )
+	} else if (input.search(' at ') > 0){
+		console.log("at")
+		var splitted = input.split( 'at' )
+	}
+
 	eventSummary = splitted[0].trim();
 	
 	if (!splitted[1]) { // If split unsuccessful (ie, input contained no substring)
@@ -84,7 +91,7 @@ function parseDate(input) {
 	//output = date.now + 1 day
 	
 	if (input)
-	var date = new Date(input); // Create date object with input
+		var date = new Date(input); // Create date object with input
 	else {		
 		inputGood = 0 // Mark user input as unacceptable
 		return error("No date/time found in input (Error D1)") // If no input received, return Error 1
