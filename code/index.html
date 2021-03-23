@@ -1,176 +1,89 @@
-// Main program code for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter
-// Open index.html in a web browser for demo webpage. The resources directory contains supporting files/framework/libraries
-//
-// This program makes use of the following open source libraries and frameworks: 
-// TODO REFERENCES HERE
-//
-// ==========================================================
+<!-- Demo website for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter -->
+<!-- See parser.js for main converter program code. The resources directory contains supporting files/framework/libraries -->
+<!-- This page makes use of the following open source libraries and frameworks: ics.js, pure.io, TODO -->
 
-// Global variables
-var eventSummary, eventBegin, eventEnd, eventDescription // Vars for event field data
-var inputGood // Whether user's input is acceptable
-
-
-// Patterns to match from user's input
-var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b"
-var regExMonth = "\\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\b"
-var relativeDate = "((?:next|last|this) (?:week|month|year)|tom(?:orrow)?|tmrw|tod(?:ay)?|(?:right )?now|tonight|day after (?:tom(?:orrow)?|tmrw)|yest(?:erday)?|day before yest(?:erday)?)"
-
-
-// Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
-function liveUpdate() {
-	// Get user's input from textbox and initially assume it's acceptable
-	var userInput = document.getElementById("userInput").value;
-	inputGood = 1;
-	
-	if (userInput) // Hide live output area if input is empty
-	document.getElementById("output").hidden = false;
-	else
-	document.getElementById("output").hidden = true;
-	
-	// Call parsing functions
-	splitInput(userInput);
-	
-	// Display returned value on page
-	document.getElementById("liveOutput").innerHTML = formatHTML(eventSummary, eventBegin, eventEnd, eventDescription);
-}
-
-
-// Function to split up input string into parts by matching keywords/patterns between fields
-function splitInput(input) {
-	
-	// Split summary from rest of input
-	if (input.search(' on ') > 0){
-		console.log("on")
-		var splitted = input.split( ' on ' )
-	} 
-	else if (input.search(' at ') > 0){
-		console.log("at")
-		var splitted = input.split( ' at ' )
-	} 
-	else { // If no summary-date separator in input, error
-		eventSummary = input
-		eventBegin = error("Could not find summary-date separator (Error S1)")
-		eventEnd = ""
-		eventDescription = ""
-	}
-	
-	if (inputGood) { // Continue parsing rest of input if summary was split okay
-		eventSummary = splitted[0].trim();
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Natural Language to iCalendar Converter</title>
+		<meta name="Description" content="COMP SCI 4TB3 Project"/>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link type="image/x-icon" rel="shortcut icon" href="resources/favicon.png"/>
+		<link rel="stylesheet" href="resources/style.css"/>
+		<script type="text/javascript" src="resources/ics.js"></script>
+		<script type="text/javascript" src="parser.js"></script>
 		
-		splitted = splitted[1].split('. '); // Split date from rest of input
-		eventBegin = parseDate(splitted[0]);
-		eventEnd = parseDate(splitted[0]); // TODO: Keep same if single-day event. If datetime range is given, set this to end		
-		eventDescription = splitted[1];
-	}
+		<!-- Temporary: force browser to ignore cache during development -->
+		<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
+		<meta http-equiv="cache-control" content="max-age=0" />
+		<meta http-equiv="expires" content="0" />
+		<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+		<meta http-equiv="pragma" content="no-cache" />
+		<!-- End temporary --> 
+	</head>
 	
-	// Store notices if certain fields are missing from input
-	if (!eventSummary)
-	eventSummary = "Untitled Event"	
-	if (!eventBegin)
-	eventBegin = "No date"
-	if (!eventEnd)
-	eventEnd = "No date"
-	if (!eventDescription)
-	eventDescription = "No description"	
+	<div class="header">
+		<div class="home-menu">
+			<h1 class="content-head content-head-ribbon"><center>Natural Language to iCalendar Converter</center></h1>
+		</div>
+	</div>
 	
-	return;
-}
-
-
-// Convert date/time from input into date object
-function parseDate(input) {
-	const referenceDate = new Date()
-	dayMatchArray = input.toLowerCase().match(regExDayofWeek) //Convert date to lowercase then match w/ regex
-	
-	if (input){
-		if (dayMatchArray){ 
-			// If input matches regex, manually create date object (TODO: set time to 00:00:00? Currently uses current time)
-			var date = new Date()
-			dayOfWeek = dayMatchArray[0]
-			var numberOfWeek;
-			switch(dayOfWeek){
-				case "sunday": numberOfWeek = 0; break;
-				case "monday": numberOfWeek = 1; break;
-				case "tuesday": numberOfWeek = 2; break;
-				case "wednesday": numberOfWeek = 3; break;
-				case "thursday": numberOfWeek = 4; break;
-				case "friday": numberOfWeek = 5; break;
-				case "saturday": numberOfWeek = 6; break;
-			}
-			if (numberOfWeek > referenceDate.getDay()){
-				date.setDate(date.getDate() + (numberOfWeek - date.getDay()))
-			} 
-			else
-			date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek))
+	<div class="ribbon l-box-lrg pure-g">
+		<div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-3-8">
+			<img width="300" class="pure-img-responsive" src="resources/logo.png">
+		</div>
+		<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-6-8">
+			<h2 class="content-head content-head-ribbon">COMP SCI 4TB3 Project Demo</h2>
+			<p>	Type your event information to view a real-time conversion, or try one of the samples. </p>
 			
-		}
-		else 
-		var date = new Date(input); // If input doens't match regex, try to create date object directly
-	} 
-	else
-	return error("No date/time found in input (Error D1)") // If blank date arg received, Error
+			<form class="pure-form">
+				<input type="text" id="userInput" class="pure-form pure-input-rounded" placeholder="Enter something!" size="50" oninput="liveUpdate()" onkeydown = "if (event.keyCode == 13) { generateICS(1); event.preventDefault();}">
+				Sample Inputs: 
+				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'CS 4TB3 Midterm 2 on 4/6/21'; liveUpdate()">1</button>
+				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Submit lab at 1055PM Thursday'; liveUpdate()">2</button>
+				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Take out trash on Tuesday. Including recycling.'; liveUpdate()">3</button>
+				<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is an invalid input because there is no date/time.'; liveUpdate()">4</button>
+			</form>	
+			
+			<div id="output" hidden>			
+				<ul id="liveOutput">
+				</ul>
+				<p id="helpText"> </p>
+				<button type="button" id="btnDownload" class="pure-button pure-button-primary" onclick="generateICS(1)">Download .ics</button>
+				<button type="button" id="btnPreview" class="pure-button pure-button-primary" onclick="generateICS(0)">Preview .ics</button>
+			</div>
+		</div>
+	</div>
 	
-	if (date == 'Invalid Date') {
-		return error("Could not parse <i>" + input + "</i> as a date (Error D2)") // If date object is invalid, Error
-	}
+	<div class="content">	
+		<h2 class="content-head is-center">About the Project</h2>	
+		<div class="pure-g">
+			<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
+				<p>	This webpage demonstrates our group's final project, which converts a user’s schedule information from a natural language input to an output in the standard <a href = "https://en.wikipedia.org/wiki/iCalendar">iCalendar (.ics) format</a>. </p>
+				<p>	This system will allow users to easily create new calendar event files with the use of only their keyboard, providing information such as the event's name, date, and time together as part of one input string. </p>
+				<p>
+					<a href="ver/1/">Ver 1</a>
+					<a href="ver/2/">Ver 2</a>
+					<a href="ver/3/">Ver 3</a>
+				</p>
+			</div>
+			
+			<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
+				<h4>Source Code</h4>
+				<p>	All program source code is available in our group's project repository.	</p>
+				<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9">Go to GitLab</a>
+				<br/><br/>
+				
+				<h4>More Information</h4>
+				<p> For additional information on our project, please refer to our project proposal, available in the repository as the readme file. </p>
+				<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/blob/master/README.md">View Proposal</a>
+			</div>
+		</div>
+	</div>
 	
-	return date;
-}
-
-
-
-// Generate properly formatted .ICS file (once user hits enter or clicks download btn. Arg 1 = download, arg 0 = view only
-function generateICS(arg) {	
-	// If no description, use empty string for file rather than "No description"
-	if (eventDescription == "No description")
-	var icsDescription = "";
-	else 
-	var icsDescription = eventDescription;
-	
-	// Build the iCalendar file using ics.js library and parsed data
-	icalOutput = ics();
-    icalOutput.addEvent(eventSummary, icsDescription, '', eventBegin, eventEnd);
-	
-	// Give user the .ics or display the preview
-	if (arg) {
-		if (inputGood) // Download only if the input was acceptable
-		icalOutput.download(eventSummary);
-	}
-	else
-	viewOnly(icalOutput);
-	return;
-}
-
-
-// Format live output HTML
-function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {	
-	var output = '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
-	'</span></li><li id="output-date-start">Date Start: <span class="output">' + eventBegin + 
-	'</span></li><li id="output-date-end">Date End: <span class="output">' + eventEnd + 
-	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
-	'</span></li>';
-	
-	// Disable download button if the current input is unacceptable and update help text
-	if (!inputGood) {
-		document.getElementById("btnDownload").disabled = true;
-		document.getElementById("helpText").innerHTML = 'Please fix the issues above to download your iCalendar file.';
-	}
-	else {
-		document.getElementById("btnDownload").disabled = false; 
-		document.getElementById("helpText").innerHTML = 'Press Enter or click Download to generate an iCalendar file for your event.';
-	}
-	
-	return output
-}
-
-
-// Format error strings in red. Called by splitInput() and parseDate() when an error occurs
-function error(errorString) {
-	inputGood = 0 // Mark user input as unacceptable once error occurs
-	
-	// Format HTML error msg with CSS class
-	if (!errorString) // If blank argument received, use default error message
-	errorString = 'Sorry, an unknown error occurred (You should never see this)';
-	return '<span class="output-error">' + errorString + '</span>';;
-}
+	<div class="footer is-center">
+		COMP SCI 4TB3 Project - Group 9: Joshua Guinness, Arkin Modi, Jason Kim. McMaster University, 2021 Winter.
+	</div>	
+</body>
+</html>
