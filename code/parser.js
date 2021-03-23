@@ -35,10 +35,8 @@ function splitInput(input) {
 	//var input = input.toLowerCase(); // TODO recognize split keywords regardless of capitalization (but without modifying original string)
 	
 	if (input.search(' on ') > 0){
-		console.log("on")
 		var splitted = input.split( 'on' )
 	} else if (input.search(' at ') > 0){
-		console.log("at")
 		var splitted = input.split( 'at' )
 	}
 
@@ -89,14 +87,38 @@ function splitInput(input) {
 function parseDate(input) {
 	//if (input == "tomorrow")
 	//output = date.now + 1 day
+
+	const referenceDate = new Date()
+
+	dayMatchArray = input.match(regExDayofWeek)
 	
-	if (input)
-		var date = new Date(input); // Create date object with input
-	else {		
+	if (input){
+		if (dayMatchArray){
+			var date = new Date()
+			dayOfWeek = dayMatchArray[0]
+			var numberOfWeek;
+			switch(dayOfWeek){
+				case "sunday": numberOfWeek = 0; break;
+				case "monday": numberOfWeek = 1; break;
+				case "tuesday": numberOfWeek = 2; break;
+				case "wednesday": numberOfWeek = 3; break;
+				case "thursday": numberOfWeek = 4; break;
+				case "friday": numberOfWeek = 5; break;
+				case "saturday": numberOfWeek = 6; break;
+			}
+			if (numberOfWeek > referenceDate.getDay()){
+				date.setDate(date.getDate() + (numberOfWeek - date.getDay()))
+			} else {
+				date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek))
+			}
+		} else {
+			var date = new Date(input); // Create date object with input
+		}
+	} else {		
 		inputGood = 0 // Mark user input as unacceptable
 		return error("No date/time found in input (Error D1)") // If no input received, return Error 1
 	}
-	
+
 	if (date == 'Invalid Date') {
 		var output = error("Could not parse <i>" + input + "</i> as a date (Error D2)") // If date object is invalid, return Error 2)	
 		inputGood = 0 // Mark user input as unacceptable
