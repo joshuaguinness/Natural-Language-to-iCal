@@ -481,7 +481,7 @@ var ics = function (e, t) {
 // 4TB3 Added function to only display the iCalendar formatted output without downloading 2021.03.17
 function viewOnly(obj) {
 	if (!inputGood)
-	alert('iCalendar File Preview (For debugging; **please check your input**)\n=================\n' + obj.calendar());
+	alert('iCalendar File Preview\n*Note*: This file contains errors. Please check your input.\n=================\n' + obj.calendar());
 	else
 	alert('iCalendar File Preview\n=================\n' + obj.calendar());	
 }
