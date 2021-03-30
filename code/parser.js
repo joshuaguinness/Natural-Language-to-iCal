@@ -35,9 +35,9 @@ function splitInput(input) {
 	//var input = input.toLowerCase(); // TODO recognize split keywords regardless of capitalization (but without modifying original string)
 	
 	if (input.search(' on ') > 0){
-		var splitted = input.split( 'on' )
+		var splitted = input.split(' on ')
 	} else if (input.search(' at ') > 0){
-		var splitted = input.split( 'at' )
+		var splitted = input.split(' at ')
 	}
 
 	eventSummary = splitted[0].trim();
@@ -97,6 +97,7 @@ function parseDate(input) {
 			var date = new Date()
 			dayOfWeek = dayMatchArray[0]
 			var numberOfWeek;
+			dayOfWeek = dayOfWeek.toLowerCase();
 			switch(dayOfWeek){
 				case "sunday": numberOfWeek = 0; break;
 				case "monday": numberOfWeek = 1; break;
