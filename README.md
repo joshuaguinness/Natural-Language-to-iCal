@@ -21,6 +21,7 @@ TIME 4:00 pm
 The actual output will be formatted according to the iCalendar specification and can be imported into most calendaring software.
 
 ### How to Run
+To start this project, open `code/index.html` in a web browser.
 #### Jest Unit Testing
 To run the jest unit testing, run the following from the root directory:
 
