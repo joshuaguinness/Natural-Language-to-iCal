@@ -14,7 +14,7 @@ var inputGood // Whether user's input is acceptable
 // Patterns to match from user's input
 var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b"
 var regExMonth = "\\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\b"
-var relativeDate = "((?:next|last|this) (?:week|month|year)|tom(?:orrow)?|tmrw|tod(?:ay)?|(?:right )?now|tonight|day after (?:tom(?:orrow)?|tmrw)|yest(?:erday)?|day before yest(?:erday)?)"
+var relativeDate = "((?:next|last|this) (?:week|month|year)|tom(?:orrow)?|tmrw|tod(?:ay)?|(?:right )?now|tonight|day after (?:tom(?:orrow)?|tmrw)|yest(?:erday)?|day before yest(?:erday)?)|this|next"
 var dateTimeRange = "(-)|(to)|(and)"
 
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
@@ -99,39 +99,68 @@ function parseDateTime(input) {
 		return;
 	}
 
-	eventBegin = parseAbsoluteDate(input);
-	
-	eventEnd = parseAbsoluteDate(input);
+	eventBegin = parseAbsoluteDateTime(input);
+
+	eventEnd = parseAbsoluteDateTime(input);
 	eventEnd.setHours(eventEnd.getHours() + 1);//Default event length is 1hr
 
 	return;
 }
 
 // TODO
-function parseRelativeDateTime(nput){
-	console.log("Parsing Relative Date");
+function parseRelativeDateTime(input){
+	
+	var date = new Date() // Date Time to modify
+	
+	relativeDateMatch = input.match(relativeDate)[0];
 
-	return
+	if (relativeDateMatch === 'tomorrow'){
+		date.setDate(date.getDate() + 1);
+		date.setHours(9, 0, 0) // Default time to 9am
+	} else if (relativeDateMatch === 'today'){
+		date.setHours(date.getHours() + 2);
+	} else if (relativeDateMatch === 'this'){
+		dayOfWeek = input.split('this ')[1]
+		date = parseAbsoluteDateTime(dayOfWeek)
+	} else if (relativeDateMatch === 'next'){
+		dayOfWeek = input.split('next ')[1]
+		date = parseAbsoluteDateTime(dayOfWeek)
+		date.setDate(date.getDate() + 7);
+	}
+	
+	eventBegin = date;
+
+	eventEnd = date;
+	eventEnd.setHours(eventEnd.getHours() + 1);//Default event length is 1hr
+	
+	return;
 }
 
 // Split the Date Time Range at one of the keywords
 function parseDateTimeRange(input){
-	console.log("Parsing Date Time Range");
+
+	// Match the regex and split on that match
 	rangeMatch = input.match(dateTimeRange);
 	splitted = input.split(rangeMatch[0]);
-	console.log(splitted);
-	eventBegin = parseAbsoluteDate(splitted[0])
-	eventEnd = parseAbsoluteDate(splitted[1])
-	return
+
+	// Parse both dates
+	eventBegin = parseAbsoluteDateTime(splitted[0]);
+	eventEnd = parseAbsoluteDateTime(splitted[1]);
+	return;
 }
 
-function parseAbsoluteDate(input){
-	const referenceDate = new Date()
+function parseAbsoluteDateTime(input){
+	const referenceDate = new Date() // Reference Date
+	var date = new Date() // Date Time to modify
+
+	// Try to initially create a Date Time object using constructor, return if successfull
+	var dateAttempt = new Date(input)
+	if (dateAttempt != 'Invalid Date') { return dateAttempt; }
+
 	dayMatchArray = input.toLowerCase().match(regExDayofWeek) //Convert date to lowercase then match w/ regex
 
-	if (input){
 		if (dayMatchArray){ 
-			var date = new Date()
+			
 			date.setHours(9, 0, 0) // Default time to 9am
 			dayOfWeek = dayMatchArray[0].toLowerCase();
 
@@ -151,12 +180,7 @@ function parseAbsoluteDate(input){
 			else { date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek)) }
 			
 		}
-		else {
-			var date = new Date(input); // If input doens't match regex, try to create date object directly
-		}
-	} 
-	else
-	return error("No date/time found in input (Error D1)") // If blank date arg received, Error
+	else { return error("No date/time found in input (Error D1)") } // If blank date arg received, Error
 	
 	if (date == 'Invalid Date') {
 		return error("Could not parse <i>" + input + "</i> as a date (Error D2)") // If date object is invalid, Error
