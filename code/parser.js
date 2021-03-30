@@ -131,7 +131,7 @@ function parseRelativeDateTime(input){
 	eventBegin = date;
 
 	eventEnd = date;
-	eventEnd.setHours(eventEnd.getHours() + 1);//Default event length is 1hr
+	eventEnd.setHours(eventEnd.getHours() + 1); //Default event length is 1hr
 	
 	return;
 }
@@ -146,12 +146,14 @@ function parseDateTimeRange(input){
 	// Parse both dates
 	eventBegin = parseAbsoluteDateTime(splitted[0]);
 	eventEnd = parseAbsoluteDateTime(splitted[1]);
+
 	return;
 }
 
 function parseAbsoluteDateTime(input){
 	const referenceDate = new Date() // Reference Date
 	var date = new Date() // Date Time to modify
+	date.setHours(9, 0, 0) // Default time to 9am
 
 	// Try to initially create a Date Time object using constructor, return if successfull
 	var dateAttempt = new Date(input)
@@ -159,33 +161,49 @@ function parseAbsoluteDateTime(input){
 
 	dayMatchArray = input.toLowerCase().match(regExDayofWeek) //Convert date to lowercase then match w/ regex
 
-		if (dayMatchArray){ 
-			
-			date.setHours(9, 0, 0) // Default time to 9am
-			dayOfWeek = dayMatchArray[0].toLowerCase();
-
-			var numberOfWeek;
-			switch(dayOfWeek){
-				case "sunday": numberOfWeek = 0; break;
-				case "monday": numberOfWeek = 1; break;
-				case "tuesday": numberOfWeek = 2; break;
-				case "wednesday": numberOfWeek = 3; break;
-				case "thursday": numberOfWeek = 4; break;
-				case "friday": numberOfWeek = 5; break;
-				case "saturday": numberOfWeek = 6; break;
-			}
-			if (numberOfWeek > referenceDate.getDay()){
-				date.setDate(date.getDate() + (numberOfWeek - date.getDay()))
-			} 
-			else { date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek)) }
-			
-		}
-	else { return error("No date/time found in input (Error D1)") } // If blank date arg received, Error
+	if (dayMatchArray){ 
+		date = setDateByDayOfWeek(date, dayMatchArray, referenceDate)
+	}
+	else { 
+		return error("No date/time found in input (Error D1)") // If blank date arg received, Error
+	}
 	
 	if (date == 'Invalid Date') {
 		return error("Could not parse <i>" + input + "</i> as a date (Error D2)") // If date object is invalid, Error
 	}
 	
+	return date;
+}
+
+function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
+	
+	dayOfWeek = dayMatchArray[0].toLowerCase();
+
+	var numberOfWeek;
+	switch(dayOfWeek){
+		case "sunday": numberOfWeek = 0; break;
+		case "monday": numberOfWeek = 1; break;
+		case "tuesday": numberOfWeek = 2; break;
+		case "wednesday": numberOfWeek = 3; break;
+		case "thursday": numberOfWeek = 4; break;
+		case "friday": numberOfWeek = 5; break;
+		case "saturday": numberOfWeek = 6; break;
+		case "sun": numberOfWeek = 0; break;
+		case "mon": numberOfWeek = 1; break;
+		case "tues": numberOfWeek = 2; break;
+		case "wed": numberOfWeek = 3; break;
+		case "thur": numberOfWeek = 4; break;
+		case "thurs": numberOfWeek = 4; break;
+		case "fri": numberOfWeek = 5; break;
+		case "sat": numberOfWeek = 6; break;
+	}
+
+	if (numberOfWeek > referenceDate.getDay()){
+		date.setDate(date.getDate() + (numberOfWeek - date.getDay()))
+	} else { 
+		date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek)) 
+	}
+
 	return date;
 }
 
