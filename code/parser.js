@@ -38,15 +38,15 @@ function liveUpdate() {
 
 // Split input string at "."
 function splitAtPeriod(input) {
-		
-	splitted = input.split('. '); // Split description from rest of input
-	if (splitted[1]){
-		eventDescription = splitted[1];
-	} else {
-		eventDescription = "No description";
-		splitSummaryDate(splitted[0])
-	}
 	
+	// Split description from rest of input	
+	splitted = input.split('. ');
+
+	if (splitted[1]){ eventDescription = splitted[1]; } 
+	else { eventDescription = "No description"; }
+
+	splitSummaryDate(splitted[0])
+
 	return;
 }
 
@@ -82,7 +82,6 @@ function splitSummaryDate(input){
 	eventEnd = "No date"
 
 }
-
 
 // Convert date/time from input into date object
 function parseDate(input) {
