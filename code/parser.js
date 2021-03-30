@@ -15,7 +15,7 @@ var inputGood // Whether user's input is acceptable
 var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b"
 var regExMonth = "\\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\b"
 var relativeDate = "((?:next|last|this) (?:week|month|year)|tom(?:orrow)?|tmrw|tod(?:ay)?|(?:right )?now|tonight|day after (?:tom(?:orrow)?|tmrw)|yest(?:erday)?|day before yest(?:erday)?)"
-
+var dateTimeRange = "(-)|(to)|(and)"
 
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
 function liveUpdate() {
@@ -55,13 +55,17 @@ function splitSummaryDate(input){
 
 	// Split summary from rest of input
 	if (input.search(' on ') > 0){
-		console.log("on")
 		var splitted = input.split(' on ')
 	} 
 	else if (input.search(' at ') > 0){
-		console.log("at")
 		var splitted = input.split(' at ')
 	} 
+	else if (input.search(' from ') > 0){
+		var splitted = input.split(' from ')
+	}
+	else if (input.search(' between') > 0){
+		var splitted = input.split(' between ')
+	}
 	else { // If no summary-date separator in input, error
 		eventSummary = input
 		eventBegin = error("Could not find summary-date separator (Error S1)")
@@ -70,8 +74,7 @@ function splitSummaryDate(input){
 	}
 
 	eventSummary = splitted[0]
-	eventBegin = parseDate(splitted[1]);
-	eventEnd = parseDate(splitted[1]); // TODO: Keep same if single-day event. If datetime range is given, set this to end		
+	parseDateTime(splitted[1]);	
 
 	// Store notices if certain fields are missing from input
 	if (!eventSummary)
@@ -84,17 +87,55 @@ function splitSummaryDate(input){
 }
 
 // Convert date/time from input into date object
-function parseDate(input) {
+function parseDateTime(input) {
+
+	if (input.match(relativeDate)){
+		parseRelativeDateTime(input);
+		return;
+	}
+
+	if (input.match(dateTimeRange)){
+		parseDateTimeRange(input);
+		return;
+	}
+
+	eventBegin = parseAbsoluteDate(input);
+	
+	eventEnd = parseAbsoluteDate(input);
+	eventEnd.setHours(eventEnd.getHours() + 1);//Default event length is 1hr
+
+	return;
+}
+
+// TODO
+function parseRelativeDateTime(nput){
+	console.log("Parsing Relative Date");
+
+	return
+}
+
+// Split the Date Time Range at one of the keywords
+function parseDateTimeRange(input){
+	console.log("Parsing Date Time Range");
+	rangeMatch = input.match(dateTimeRange);
+	splitted = input.split(rangeMatch[0]);
+	console.log(splitted);
+	eventBegin = parseAbsoluteDate(splitted[0])
+	eventEnd = parseAbsoluteDate(splitted[1])
+	return
+}
+
+function parseAbsoluteDate(input){
 	const referenceDate = new Date()
 	dayMatchArray = input.toLowerCase().match(regExDayofWeek) //Convert date to lowercase then match w/ regex
-	
+
 	if (input){
 		if (dayMatchArray){ 
-			// If input matches regex, manually create date object (TODO: set time to 00:00:00? Currently uses current time)
 			var date = new Date()
-			dayOfWeek = dayMatchArray[0]
+			date.setHours(9, 0, 0) // Default time to 9am
+			dayOfWeek = dayMatchArray[0].toLowerCase();
+
 			var numberOfWeek;
-			dayOfWeek = dayOfWeek.toLowerCase();
 			switch(dayOfWeek){
 				case "sunday": numberOfWeek = 0; break;
 				case "monday": numberOfWeek = 1; break;
@@ -107,12 +148,12 @@ function parseDate(input) {
 			if (numberOfWeek > referenceDate.getDay()){
 				date.setDate(date.getDate() + (numberOfWeek - date.getDay()))
 			} 
-			else
-			date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek))
+			else { date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek)) }
 			
 		}
-		else 
-		var date = new Date(input); // If input doens't match regex, try to create date object directly
+		else {
+			var date = new Date(input); // If input doens't match regex, try to create date object directly
+		}
 	} 
 	else
 	return error("No date/time found in input (Error D1)") // If blank date arg received, Error
@@ -123,8 +164,6 @@ function parseDate(input) {
 	
 	return date;
 }
-
-
 
 // Generate properly formatted .ICS file (once user hits enter or clicks download btn. Arg 1 = download, arg 0 = view only
 function generateICS(arg) {	
