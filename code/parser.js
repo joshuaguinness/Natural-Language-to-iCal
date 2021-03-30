@@ -41,17 +41,6 @@ function splitInput(input) {
 	
 	// Split summary from rest of input
 	if (input.search(' on ') > 0){
-<<<<<<< HEAD
-		var splitted = input.split(' on ')
-	} else if (input.search(' at ') > 0){
-		var splitted = input.split(' at ')
-	}
-
-	eventSummary = splitted[0].trim();
-	
-	if (!splitted[1]) { // If split unsuccessful (ie, input contained no substring)
-		inputGood = 0 // Mark user input as unacceptable
-=======
 		console.log("on")
 		var splitted = input.split( ' on ' )
 	} 
@@ -61,7 +50,6 @@ function splitInput(input) {
 	} 
 	else { // If no summary-date separator in input, error
 		eventSummary = input
->>>>>>> fc447dca9fd3010ffaaebd2b99eccfe104d3d7bd
 		eventBegin = error("Could not find summary-date separator (Error S1)")
 		eventEnd = ""
 		eventDescription = ""
