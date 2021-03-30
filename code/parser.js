@@ -29,41 +29,50 @@ function liveUpdate() {
 	document.getElementById("output").hidden = true;
 	
 	// Call parsing functions
-	splitInput(userInput);
+	splitAtPeriod(userInput);
 	
 	// Display returned value on page
 	document.getElementById("liveOutput").innerHTML = formatHTML(eventSummary, eventBegin, eventEnd, eventDescription);
 }
 
 
-// Function to split up input string into parts by matching keywords/patterns between fields
-function splitInput(input) {
+// Split input string at "."
+function splitAtPeriod(input) {
+		
+	splitted = input.split('. '); // Split description from rest of input
+	if (splitted[1]){
+		eventDescription = splitted[1];
+	} else {
+		eventDescription = "No description";
+		splitSummaryDate(splitted[0])
+	}
 	
+	return;
+}
+
+// Split the summary and date
+function splitSummaryDate(input){
+
 	// Split summary from rest of input
 	if (input.search(' on ') > 0){
 		console.log("on")
-		var splitted = input.split( ' on ' )
+		var splitted = input.split(' on ')
 	} 
 	else if (input.search(' at ') > 0){
 		console.log("at")
-		var splitted = input.split( ' at ' )
+		var splitted = input.split(' at ')
 	} 
 	else { // If no summary-date separator in input, error
 		eventSummary = input
 		eventBegin = error("Could not find summary-date separator (Error S1)")
 		eventEnd = ""
-		eventDescription = ""
+		return
 	}
-	
-	if (inputGood) { // Continue parsing rest of input if summary was split okay
-		eventSummary = splitted[0].trim();
-		
-		splitted = splitted[1].split('. '); // Split date from rest of input
-		eventBegin = parseDate(splitted[0]);
-		eventEnd = parseDate(splitted[0]); // TODO: Keep same if single-day event. If datetime range is given, set this to end		
-		eventDescription = splitted[1];
-	}
-	
+
+	eventSummary = splitted[0]
+	eventBegin = parseDate(splitted[1]);
+	eventEnd = parseDate(splitted[1]); // TODO: Keep same if single-day event. If datetime range is given, set this to end		
+
 	// Store notices if certain fields are missing from input
 	if (!eventSummary)
 	eventSummary = "Untitled Event"	
@@ -71,10 +80,7 @@ function splitInput(input) {
 	eventBegin = "No date"
 	if (!eventEnd)
 	eventEnd = "No date"
-	if (!eventDescription)
-	eventDescription = "No description"	
-	
-	return;
+
 }
 
 
