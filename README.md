@@ -21,3 +21,9 @@ TIME 4:00 pm
 The actual output will be formatted according to the iCalendar specification and can be imported into most calendaring software.
 
 ### How to Run
+#### Jest Unit Testing
+To run the jest unit testing, run the following from the root directory:
+
+```
+npm run test
+```
