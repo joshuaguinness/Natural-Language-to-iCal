@@ -23,3 +23,8 @@ _Example_:\
 **Input:** input : string, string to be split \
 **Output:** None \
 **Description:** Splits the inputted string at all occurrences of ". ". Based on the specified grammar structure, anything before ". " is the date and summary of the event and following ". " is the description of the event. The grammar only supports one instance of ". ". The description are updated in the global variable, while the date and summary are passed to splitSummaryDate().
+
+**splitSummaryDate** \
+**Input:** input : string, string to be split \
+**Output:** None \
+**Description:** Splits the inputted string at all occurrences of ". ". Based on the specified input structure, the words "on", "at", "from", and "between" are what separate the date and the summary. The date is passed to parseDateTime() and the summary is updated in the global variable.
