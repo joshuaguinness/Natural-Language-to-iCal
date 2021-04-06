@@ -15,3 +15,8 @@ _Example_:\
 **Description:** Function to split up input string into parts by matching keywords/patterns between fields
 
 ## parser.js
+
+**liveUpdate** \
+**Input:** None \
+**Output:** None \
+**Description:** Updates the currently recognized fields on the front-end.
