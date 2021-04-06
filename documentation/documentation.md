@@ -20,3 +20,10 @@ _Example_:\
 **Input:** None \
 **Output:** None \
 **Description:** Updates the currently recognized fields on the front-end.
+
+**splitAtPeriod** \
+**Input:**
+- input : string, string to be split
+
+**Output:** None \
+**Description:** Splits the inputted string at all occurrences of ". ". Based on the specified input structure, anything before ". " is the date of the event and following ". " is the description of the event. The structure only supports one instance of ". ". The description are updated in the global variable, while the date is passed to splitSummaryDate().
