@@ -261,3 +261,18 @@ function error(errorString) {
 	errorString = 'Sorry, an unknown error occurred (You should never see this)';
 	return '<span class="output-error">' + errorString + '</span>';;
 }
+
+module.export = {
+	eventSummary, 
+	eventBegin, 
+	eventEnd, 
+	eventDescription, 
+	splitAtPeriod, 
+	splitSummaryDate, 
+	parseDateTime, 
+	parseRelativeDateTime,
+	parseDateTimeRange, 
+	parseAbsoluteDateTime, 
+	setDateByDayOfWeek, 
+	generateICS
+}
