@@ -41,18 +41,18 @@ function splitAtPeriod(input) {
 	
 	// Split description from rest of input	
 	splitted = input.split('. ');
-
+	
 	if (splitted[1]){ eventDescription = splitted[1]; } 
 	else { eventDescription = "No description"; }
-
+	
 	splitSummaryDate(splitted[0])
-
+	
 	return;
 }
 
 // Split the summary and date
 function splitSummaryDate(input){
-
+	
 	// Split summary from rest of input
 	if (input.search(' on ') > 0){
 		var splitted = input.split(' on ')
@@ -72,10 +72,10 @@ function splitSummaryDate(input){
 		eventEnd = ""
 		return
 	}
-
+	
 	eventSummary = splitted[0]
 	parseDateTime(splitted[1]);	
-
+	
 	// Store notices if certain fields are missing from input
 	if (!eventSummary)
 	eventSummary = "Untitled Event"	
@@ -87,14 +87,14 @@ function splitSummaryDate(input){
 
 // Convert date/time from input into date object
 function parseDateTime(input) {
-
+	
 	if (input.match(relativeDate)){
 		parseRelativeDateTime(input);
 		return;
-	} else if (input.match(dateTimeRange)){
+		} else if (input.match(dateTimeRange)){
 		parseDateTimeRange(input);
 		return;
-	} else {
+		} else {
 		eventBegin = parseAbsoluteDateTime(input);
 		eventEnd = parseAbsoluteDateTime(input);
 		if (typeof eventEnd === Date) {
@@ -110,23 +110,23 @@ function parseRelativeDateTime(input){
 	var date = new Date() // Date Time to modify
 	
 	relativeDateMatch = input.match(relativeDate)[0];
-
+	
 	if (relativeDateMatch === 'tomorrow'){
 		date.setDate(date.getDate() + 1);
 		date.setHours(9, 0, 0) // Default time to 9am
-	} else if (relativeDateMatch === 'today'){
+		} else if (relativeDateMatch === 'today'){
 		date.setHours(date.getHours() + 2);
-	} else if (relativeDateMatch === 'this'){
+		} else if (relativeDateMatch === 'this'){
 		dayOfWeek = input.split('this ')[1]
 		date = parseAbsoluteDateTime(dayOfWeek)
-	} else if (relativeDateMatch === 'next'){
+		} else if (relativeDateMatch === 'next'){
 		dayOfWeek = input.split('next ')[1]
 		date = parseAbsoluteDateTime(dayOfWeek)
 		date.setDate(date.getDate() + 7);
 	}
 	
 	eventBegin = date;
-
+	
 	eventEnd = date;
 	eventEnd.setHours(eventEnd.getHours() + 1); //Default event length is 1hr
 	
@@ -135,15 +135,15 @@ function parseRelativeDateTime(input){
 
 // Split the Date Time Range at one of the keywords
 function parseDateTimeRange(input){
-
+	
 	// Match the regex and split on that match
 	rangeMatch = input.match(dateTimeRange);
 	splitted = input.split(rangeMatch[0]);
-
+	
 	// Parse both dates
 	eventBegin = parseAbsoluteDateTime(splitted[0]);
 	eventEnd = parseAbsoluteDateTime(splitted[1]);
-
+	
 	return;
 }
 
@@ -151,17 +151,17 @@ function parseAbsoluteDateTime(input){
 	const referenceDate = new Date() // Reference Date
 	var date = new Date() // Date Time to modify
 	date.setHours(9, 0, 0) // Default time to 9am
-
+	
 	// Try to initially create a Date Time object using constructor, return if successfull
 	var dateAttempt = new Date(input)
 	if (dateAttempt != 'Invalid Date') { return dateAttempt; }
-
+	
 	dayMatchArray = input.toLowerCase().match(regExDayofWeek) //Convert date to lowercase then match w/ regex
-
+	
 	if (dayMatchArray){ 
 		date = setDateByDayOfWeek(date, dayMatchArray, referenceDate)
-	} else { 
-		return error("No date/time found in input (Error D1)") // If blank date arg received, Error
+		} else { 
+		return error("Could not find acceptable date/time in input (Error D1)") // If blank date arg received, Error
 	}
 	
 	if (date == 'Invalid Date') {
@@ -171,35 +171,35 @@ function parseAbsoluteDateTime(input){
 	return date;
 }
 
-function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
-	
+
+function setDateByDayOfWeek(date, dayMatchArray, referenceDate){	
 	dayOfWeek = dayMatchArray[0].toLowerCase();
-
-	var numberOfWeek;
-	switch(dayOfWeek){
-		case "sunday": numberOfWeek = 0; break;
-		case "monday": numberOfWeek = 1; break;
-		case "tuesday": numberOfWeek = 2; break;
-		case "wednesday": numberOfWeek = 3; break;
-		case "thursday": numberOfWeek = 4; break;
-		case "friday": numberOfWeek = 5; break;
-		case "saturday": numberOfWeek = 6; break;
-		case "sun": numberOfWeek = 0; break;
-		case "mon": numberOfWeek = 1; break;
-		case "tues": numberOfWeek = 2; break;
-		case "wed": numberOfWeek = 3; break;
-		case "thur": numberOfWeek = 4; break;
-		case "thurs": numberOfWeek = 4; break;
-		case "fri": numberOfWeek = 5; break;
-		case "sat": numberOfWeek = 6; break;
-	}
-
-	if (numberOfWeek > referenceDate.getDay()){
-		date.setDate(date.getDate() + (numberOfWeek - date.getDay()))
-	} else { 
-		date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek)) 
-	}
-
+	
+	// Match day of week from input
+	if (dayOfWeek.startsWith('sun'))
+	numberOfWeek = 0;
+	else if (dayOfWeek.startsWith('mon'))
+	numberOfWeek = 1;
+	else if (dayOfWeek.startsWith('tue'))
+	numberOfWeek = 2;
+	else if (dayOfWeek.startsWith('wed'))
+	numberOfWeek = 3;
+	else if (dayOfWeek.startsWith('thu'))
+	numberOfWeek = 4;
+	else if (dayOfWeek.startsWith('fri'))
+	numberOfWeek = 5;
+	else if (dayOfWeek.startsWith('sat'))
+	numberOfWeek = 6;
+	else
+	numberOfWeek = -1;	
+	
+	if (numberOfWeek == -1)
+	return error("Could not parse <i>" + dayOfWeek + "</i> as a relative date (Error D3)") // Should not occur since input is checked against regex beforehand
+	else if (numberOfWeek > referenceDate.getDay())
+	date.setDate(date.getDate() + (numberOfWeek - date.getDay())) // Input is an upcoming day this week
+	else
+	date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek)) // Input is an upcoming day next week
+	
 	return date;
 }
 
@@ -228,11 +228,12 @@ function generateICS(arg) {
 
 // Format live output HTML
 function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {	
-	var output = '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
-	'</span></li><li id="output-date-start">Date Start: <span class="output">' + eventBegin + 
-	'</span></li><li id="output-date-end">Date End: <span class="output">' + eventEnd + 
-	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
-	'</span></li>';
+	// Format date and time 
+	if (inputGood) {
+		const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+		eventBegin = eventBegin.toLocaleDateString("en-US", options) + ' ' + eventBegin.toLocaleTimeString();
+		eventEnd = eventEnd.toLocaleDateString("en-US", options) + ' ' + eventEnd.toLocaleTimeString();
+	}
 	
 	// Disable download button if the current input is unacceptable and update help text
 	if (!inputGood) {
@@ -244,7 +245,12 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 		document.getElementById("helpText").innerHTML = 'Press Enter or click Download to generate an iCalendar file for your event.';
 	}
 	
-	return output
+	// Return the parsed data in a user-friendly way for real-time display on page
+	return '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
+	'</span></li><li id="output-date-start">Date Start: <span class="output">' + eventBegin +
+	'</span></li><li id="output-date-end">Date End: <span class="output">' + eventEnd + 
+	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
+	'</span></li>';
 }
 
 
