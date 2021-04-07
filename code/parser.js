@@ -80,9 +80,9 @@ function splitSummaryDate(input){
 	if (!eventSummary)
 	eventSummary = "Untitled Event"	
 	if (!eventBegin)
-	eventBegin = "No date"
+	eventBegin = "No date or time"
 	if (!eventEnd)
-	eventEnd = "No date"
+	eventEnd = "No date or time"
 
 }
 
@@ -92,19 +92,18 @@ function parseDateTime(input) {
 	if (input.match(relativeDate)){
 		parseRelativeDateTime(input);
 		return;
-	}
-
-	if (input.match(dateTimeRange)){
+	} else if (input.match(dateTimeRange)){
 		parseDateTimeRange(input);
 		return;
+	} else {
+		eventBegin = parseAbsoluteDateTime(input);
+		eventEnd = parseAbsoluteDateTime(input);
+		console.log(eventEnd);
+		if (typeof eventEnd === Date) {
+			eventEnd.setHours(eventEnd.getHours() + 1); //Default event length is 1hr
+		} 
+		return;
 	}
-
-	eventBegin = parseAbsoluteDateTime(input);
-
-	eventEnd = parseAbsoluteDateTime(input);
-	eventEnd.setHours(eventEnd.getHours() + 1);//Default event length is 1hr
-
-	return;
 }
 
 // TODO
@@ -163,8 +162,7 @@ function parseAbsoluteDateTime(input){
 
 	if (dayMatchArray){ 
 		date = setDateByDayOfWeek(date, dayMatchArray, referenceDate)
-	}
-	else { 
+	} else { 
 		return error("No date/time found in input (Error D1)") // If blank date arg received, Error
 	}
 	
