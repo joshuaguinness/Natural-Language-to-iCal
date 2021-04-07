@@ -83,7 +83,6 @@ function splitSummaryDate(input){
 	eventBegin = "No date or time"
 	if (!eventEnd)
 	eventEnd = "No date or time"
-
 }
 
 // Convert date/time from input into date object
@@ -98,7 +97,6 @@ function parseDateTime(input) {
 	} else {
 		eventBegin = parseAbsoluteDateTime(input);
 		eventEnd = parseAbsoluteDateTime(input);
-		console.log(eventEnd);
 		if (typeof eventEnd === Date) {
 			eventEnd.setHours(eventEnd.getHours() + 1); //Default event length is 1hr
 		} 
