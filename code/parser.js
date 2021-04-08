@@ -256,7 +256,7 @@ function error(errorString) {
 	return '<span class="output-error">' + errorString + '</span>';;
 }
 
-module.export = {
+module.exports = {
 	eventSummary, 
 	eventBegin, 
 	eventEnd, 
