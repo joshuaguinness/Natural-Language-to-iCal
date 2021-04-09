@@ -258,8 +258,8 @@ function error(errorString) {
 
 
 // Automatically fills input using URL parameter and generates file immediately
-// (usage: /index.html?q=Do something on Friday         --Download .ics upon page load
-//         /index.html?q=Do something on Friday&preview --Preview .ics upon page load)
+// (usage: /index.html?q=Do something on Friday      --Download .ics upon page load
+//         /index.html?q=Do something on Friday&p    --Preview .ics upon page load)
 function onLoad() {
 	// Get the input string from URL
 	const urlParams = new URLSearchParams(window.location.search);
