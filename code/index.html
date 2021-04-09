@@ -1,6 +1,6 @@
 <!-- Demo website for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter -->
 <!-- See parser.js for main converter program code. The resources directory contains supporting files/framework/libraries -->
-<!-- This page makes use of the following open source libraries and frameworks: ics.js, pure.io, TODO -->
+<!-- This page makes use of the following open source libraries and frameworks: ics.js, pure.io -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,66 +22,66 @@
 		<meta http-equiv="pragma" content="no-cache" />
 		<!-- End temporary --> 
 	</head>
-<body>
-	<div class="header">
-		<div class="home-menu">
-			<h1 class="content-head content-head-ribbon"><center>Natural Language to iCalendar Converter</center></h1>
-		</div>
-	</div>
-	
-	<div class="ribbon l-box-lrg pure-g">
-		<div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-3-8">
-			<img width="300" class="pure-img-responsive" src="resources/logo.png">
-		</div>
-		<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-6-8">
-			<h2 class="content-head content-head-ribbon">COMP SCI 4TB3 Project Demo</h2>
-			<p>	Type your event information to view a real-time conversion, or try one of the samples. </p>
-			
-			<form class="pure-form">
-				<input type="text" id="userInput" class="pure-form pure-input-rounded" placeholder="Enter something!" size="50" oninput="liveUpdate()" autofocus onkeydown = "if (event.keyCode == 13) { generateICS(1); event.preventDefault();}">
-				Sample Inputs: 
-				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'CS 4TB3 Midterm 2 on 4/6/21. On Teams. Review notes.'; liveUpdate()">1</button>
-				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Complete project by Mon, Apr 12. Submit everything on Gitlab'; liveUpdate()">2</button>
-				<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Submit lab on Jhub at 1055PM Thursday'; liveUpdate()">3</button>
-				<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is an invalid input because there is no date or time.'; liveUpdate()">4</button>
-				<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is an invalid input on tuesday to frday. because of a typo'; liveUpdate()">5</button>
-			</form>
-			
-			<div id="output" hidden>			
-				<ul id="liveOutput">
-				</ul>
-				<p id="helpText"> </p>
-				<button type="button" id="btnDownload" class="pure-button pure-button-primary" onclick="generateICS(1)">Download .ics</button>
-				<button type="button" id="btnPreview" class="pure-button pure-button-primary" onclick="generateICS(0)">Preview .ics</button>
+	<body onload="onLoad()">
+		<div class="header">
+			<div class="home-menu">
+				<h1 class="content-head content-head-ribbon"><center>Natural Language to iCalendar Converter</center></h1>
 			</div>
 		</div>
-	</div>
-	
-	<div class="content">	
-		<h2 class="content-head is-center">About the Project</h2>	
-		<div class="pure-g">
-			<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
-				<p>	This webpage demonstrates our group's project, which converts a user’s schedule information from a natural language input to an output in the standard <a href = "https://en.wikipedia.org/wiki/iCalendar">iCalendar</a> (.ics) format. </p>
-				<p>	Users can easily create new calendar events using only their keyboard, providing information such as the event's name, date, and time together as part of one input string. </p>
-				<p>	The system parses the input and displays recognized fields in real time. Pressing Enter once the required information has been provided generates an .ics event file, which can be added to most calendar applications and services. </p>
+		
+		<div class="ribbon l-box-lrg pure-g">
+			<div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-3-8">
+				<img width="300" class="pure-img-responsive" src="resources/logo.png">
 			</div>
-			
-			<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
-				<h4>Source Code</h4>
-				<p>	The main program is written in JavaScript. All program source code is available in our group's project repository.	</p>
-				<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9">Go to GitLab</a>
-				<br/><br/>
+			<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-6-8">
+				<h2 class="content-head content-head-ribbon">COMP SCI 4TB3 Project Demo</h2>
+				<p>	Type your event information to view a real-time conversion, or try one of the samples. </p>
 				
-				<h4>More Information</h4>
-				<p> For additional information on our project, please refer to the proposal and accompanying documentation. </p>
-				<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/blob/master/documentation/project-proposal.md">View Proposal</a>
-				<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/tree/master/documentation">View Documentation</a>
+				<form class="pure-form">
+					<input type="text" id="userInput" class="pure-form pure-input-rounded" placeholder="Enter something!" size="50" oninput="liveUpdate()" autofocus onkeydown = "if (event.keyCode == 13) { generateICS(1); event.preventDefault();}">
+					Sample Inputs: 
+					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'CS 4TB3 Midterm 2 on 4/6/21. On Teams. Review notes.'; liveUpdate()">1</button>
+					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Complete project by Mon, Apr 12. Submit everything on Gitlab'; liveUpdate()">2</button>
+					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Submit lab on Jhub at 1055PM Thursday'; liveUpdate()">3</button>
+					<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is an invalid input because there is no date or time.'; liveUpdate()">4</button>
+					<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is an invalid input on tuesday to frday. because of a typo'; liveUpdate()">5</button>
+				</form>
+				
+				<div id="output" hidden>			
+					<ul id="liveOutput">
+					</ul>
+					<p id="helpText"> </p>
+					<button type="button" id="btnDownload" class="pure-button pure-button-primary" onclick="generateICS(1)">Download .ics</button>
+					<button type="button" id="btnPreview" class="pure-button pure-button-primary" onclick="generateICS(0)">Preview .ics</button>
+				</div>
 			</div>
 		</div>
-	</div>
-	
-	<div class="footer is-center">
-		COMP SCI 4TB3 Project - Group 9: Joshua Guinness, Arkin Modi, Jason Kim. McMaster University, 2021 Winter.
-	</div>
-</body>
+		
+		<div class="content">	
+			<h2 class="content-head is-center">About the Project</h2>	
+			<div class="pure-g">
+				<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
+					<p>	This webpage demonstrates our group's project, which converts a user’s schedule information from a natural language input to an output in the standard <a href = "https://en.wikipedia.org/wiki/iCalendar">iCalendar</a> (.ics) format. </p>
+					<p>	Users can easily create new calendar events using only their keyboard, providing information such as the event's name, date, and time together as part of one input string. </p>
+					<p>	The system parses the input and displays recognized fields in real time. Pressing Enter once the required information has been provided generates an .ics event file, which can be added to most calendar applications and services. </p>
+				</div>
+				
+				<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
+					<h4>Source Code</h4>
+					<p>	The main program is written in JavaScript. All program source code is available in our group's project repository.	</p>
+					<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9">Go to GitLab</a>
+					<br/><br/>
+					
+					<h4>More Information</h4>
+					<p> For additional information on our project, please refer to the proposal and accompanying documentation. </p>
+					<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/blob/master/documentation/project-proposal.md">View Proposal</a>
+					<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/tree/master/documentation">View Documentation</a>
+				</div>
+			</div>
+		</div>
+		
+		<div class="footer is-center">
+			COMP SCI 4TB3 Project - Group 9: Joshua Guinness, Arkin Modi, Jason Kim. McMaster University, 2021 Winter.
+		</div>
+	</body>
 </html>
