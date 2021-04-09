@@ -21,7 +21,15 @@ TIME 4:00 pm
 The actual output will be formatted according to the iCalendar specification and can be imported into most calendaring software.
 
 ### How to Run
-To run the demo, download the contents of the `code` directory then open `index.html` in a web browser.
+To access the demonstration page, download the contents of the `code` directory then open `index.html` in a web browser. There are two ways to use the demo page:
+
+1. Enter event information directly into the textbox on the web page, then select to Download or Preview the resulting iCalendar file.
+2. Send the input string as a URL parameter to immediately generate the output file with no additional interaction: 
+```index.html?q=Take out trash on thursday```
+To preview the output only, add an additional ```p``` parameter:
+```index.html?q=Take out trash on thursday&p```
+
+Note when using the second option, certain reserved characters including ``` # $ & + ,  / : ; = ? @ [ ]``` must be percent encoded, for example ```&``` entered as ```%26```.
 
 ### Jest Unit Testing
 To run the jest unit testing, run the following from the root directory:
