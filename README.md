@@ -6,7 +6,7 @@ _Group 9: Joshua Guinness, Arkin Modi, Jason Kim_
 ### Project Overview
 This repository hosts the code and accompanying documentation for our group's project, which converts a user’s schedule information from a natural language input to an output in the standard iCalendar (.ics) format. 
 
-Users can easily create new calendar events using only their keyboard, providing information such as the event's name, date, and time together as part of one input string.
+Users are able to easily create new calendar events using only their keyboard, providing information such as the event's name, date, and time together as part of one input string.
 
 For example, natural language user input such as the following:
 ```js
@@ -19,7 +19,7 @@ DATE Monday, April 5 2021, 4:00PM EST
 DESCRIPTION: Bring Notes
 ```
 
-The system parses the input and displays recognized fields in a user friendly, non-iCalendar format on the page. Pressing Enter once the required information has been provided generates an .ics event file, which can be imported into almsot any calendar application.
+The system parses the input and displays recognized fields in a user friendly, non-iCalendar format on the page in real time. Pressing Enter then generates an .ics event file, which can be imported into almost any calendar application.
 
 ### How to Run
 To access the demonstration page, download the contents of the `code` directory then open `index.html` in a web browser. There are two ways to use the demo page:
