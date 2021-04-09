@@ -256,6 +256,27 @@ function error(errorString) {
 	return '<span class="output-error">' + errorString + '</span>';;
 }
 
+
+// Automatically fills input using URL parameter and generates file immediately
+// (usage: /index.html?q=Do something on Friday         --Download .ics upon page load
+//         /index.html?q=Do something on Friday&preview --Preview .ics upon page load)
+function onLoad() {
+	// Get the input string from URL
+	const urlParams = new URLSearchParams(window.location.search);
+	const inputString = urlParams.get('q');
+	const previewOnly = urlParams.get('p');
+	
+	// Enter input into textbox and update the page
+	document.getElementById('userInput').value = inputString; 
+	liveUpdate();
+	
+	if (previewOnly != null)
+	generateICS(0); // Preview only if &preview argument is also present
+	else
+	generateICS(1); // Otherwise download
+}
+
+
 module.exports = {
 	eventSummary, 
 	eventBegin, 
