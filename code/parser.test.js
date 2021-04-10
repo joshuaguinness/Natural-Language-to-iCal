@@ -1,6 +1,7 @@
 const parser = require("./parser");
 
 // TODO: Create tests for regex
+// TODO: Create tests for end date before start date
 
 // setDateByDayOfWeek tests
 test("setDateByDayOfWeek: set event to day of the week ", () => {
@@ -27,5 +28,13 @@ test("setDateByDayOfWeek: test error handling", () => {
     let date = new Date("April 12, 2021 09:00:00");
     let event = parser.setDateByDayOfWeek(date, dayMatchArray, referenceDate);
     let expected = "<span class=\"output-error\">Could not parse <i>test</i> as a relative date (Error D3)</span>";
+    expect(event).toBe(expected);
+})
+
+// parseAbsoluteDateTime tests
+test("parseAbsoluteDateTime: test error handling", () => {
+    const input = "test";
+    let event = parser.parseAbsoluteDateTime(input);
+    let expected = "<span class=\"output-error\">Could not parse <i>test</i> as a date (Error D2)</span>";
     expect(event).toBe(expected);
 })
