@@ -32,6 +32,13 @@ test("setDateByDayOfWeek: test error handling", () => {
 })
 
 // parseAbsoluteDateTime tests
+test("parseAbsoluteDateTime: date slash format", () => {
+    const input = "4/6/2021";
+    let event = parser.parseAbsoluteDateTime(input);
+    const expected = "Tue Apr 06 2021"
+    expect(event.toDateString()).toBe(expected)
+})
+
 test("parseAbsoluteDateTime: test error handling", () => {
     const input = "test";
     let event = parser.parseAbsoluteDateTime(input);
