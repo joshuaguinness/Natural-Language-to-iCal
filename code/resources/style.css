@@ -51,7 +51,7 @@ button:disabled {
 .pure-button {
     background-color: #1f8dd6 !important;
     color: white !important;
-    padding: 0.5em 2em !important;
+    padding: 0.5em 1.4em !important;
     border-radius: 5px !important;
 }
 
