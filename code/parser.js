@@ -39,12 +39,7 @@ function splitAtPeriod(input) {
 	
 	// Split description from rest of input	
 	splitted = input.split('. ');
-	
-	if (splitted[1])
-	eventDescription = splitted[1];
-	else
-	eventDescription = "No description"; 
-	
+	splitted[1] ? eventDescription = splitted[1] : eventDescription = "No description"; 
 	splitSummaryDate(splitted[0])
 	
 	return;
