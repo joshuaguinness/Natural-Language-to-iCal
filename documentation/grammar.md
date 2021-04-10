@@ -4,10 +4,9 @@
 S -> Summary DateTime ["." Description]
 Summary -> [ Word ]+
 DateTime -> AbsoluteDateTime | RelativeDateTime | DateTimeRange
-AbsoluteDateTime ->
+AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) (AbsoluteTime | RelativeTime)
 RelativeDateTime -> [' at ' | ' on ' | ' by '] RelativeDate ('at' | 'in the') (AbsoluteTime | RelativeTime)
 DateTimeRange -> ['from' | 'between'] (AbsoluteDateTime | RelativeDateTime) (' - ' | ' to ' | ' and ') (AbsoluteDateTime | RelativeDateTime)
-AbsoluteDate -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) (AbsoluteTime | RelativeTime)
 RelativeDate -> 'tomorrow' | 'today' | [('this' | 'next')  DayOfWeek]
 DayOfWeek -> 'Mon' ['day'] | ... | 'Sun' ['day']
 DayOfMonth -> 1 | ... | 31
