@@ -2,7 +2,6 @@
 # Natural Language to iCalendar Converter 
 _Group 9: Joshua Guinness, Arkin Modi, Jason Kim_
 
-
 ### Project Overview
 This repository hosts the code and accompanying documentation for our group's project, which converts a user’s schedule information from a natural language input to an output in the standard iCalendar (.ics) format. 
 
@@ -36,8 +35,14 @@ To access the demonstration page, download the contents of the `code` directory 
 Note when using the second option, certain reserved characters including ` # $ & + ,  / : ; = ? @ [ ]` must be percent encoded, for example `&` entered as `%26`.
 
 ### Jest Unit Testing
-To run the jest unit testing, run the following from the root directory:
+#### Install
+To install the jest unit testing framework, run the following from the root directory:
+```
+npm install
+```
 
+#### Run
+To run the jest unit testing, run the following from the root directory:
 ```
 npm run test
 ```
