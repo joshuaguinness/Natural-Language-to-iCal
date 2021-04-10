@@ -34,7 +34,6 @@ function liveUpdate() {
 	document.getElementById("liveOutput").innerHTML = formatHTML(eventSummary, eventBegin, eventEnd, eventDescription);
 }
 
-
 // Split input string at "."
 function splitAtPeriod(input) {
 	
@@ -168,7 +167,6 @@ function parseAbsoluteDateTime(input){
 	return error("Could not parse <i>" + input + "</i> as a date (Error D2)") // Date is unrecognizable
 }
 
-
 function setDateByDayOfWeek(date, dayMatchArray, referenceDate){	
 	dayOfWeek = dayMatchArray[0].toLowerCase();
 	
@@ -200,7 +198,6 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 	return date;
 }
 
-
 // Generate properly formatted .ICS file (once user hits enter or clicks download btn. Arg 1 = download, arg 0 = view only
 function generateICS(arg) {		
 	// Build the iCalendar file using ics.js library and parsed data. If no description, use empty string for file rather than "No description"
@@ -216,7 +213,6 @@ function generateICS(arg) {
 	viewOnly(icalOutput);
 	return;
 }
-
 
 // Format live output HTML
 function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {	
@@ -245,7 +241,6 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 	'</span></li>';
 }
 
-
 // Format error strings in red and mark input as no good
 function error(errorString) {
 	inputGood = 0 // Mark user input as unacceptable once error occurs
@@ -255,7 +250,6 @@ function error(errorString) {
 	errorString = 'Sorry, an unknown error occurred (You should never see this)';
 	return '<span class="output-error">' + errorString + '</span>';;
 }
-
 
 // Automatically fills input using URL parameter and generates file immediately
 // (usage: /index.html?q=Do something on Friday      --Download .ics upon page load
@@ -275,7 +269,6 @@ function onLoad() {
 	else
 	generateICS(1); // Otherwise download
 }
-
 
 module.exports = {
 	eventSummary, 
