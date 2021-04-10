@@ -27,7 +27,7 @@ test("setDateByDayOfWeek: test error handling", () => {
     const dayMatchArray = ["test", "test"];
     let date = new Date("April 12, 2021 09:00:00");
     let event = parser.setDateByDayOfWeek(date, dayMatchArray, referenceDate);
-    let expected = "<span class=\"output-error\">Could not parse <i>test</i> as a relative date (Error D3)</span>";
+    const expected = "<span class=\"output-error\">Could not parse <i>test</i> as a relative date (Error D3)</span>";
     expect(event).toBe(expected);
 })
 
@@ -42,6 +42,6 @@ test("parseAbsoluteDateTime: date slash format", () => {
 test("parseAbsoluteDateTime: test error handling", () => {
     const input = "test";
     let event = parser.parseAbsoluteDateTime(input);
-    let expected = "<span class=\"output-error\">Could not parse <i>test</i> as a date (Error D2)</span>";
+    const expected = "<span class=\"output-error\">Could not parse <i>test</i> as a date (Error D2)</span>";
     expect(event).toBe(expected);
 })
