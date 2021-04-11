@@ -1,31 +1,27 @@
-// Main program code for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter
-// Open index.html in a web browser for demo webpage. The resources directory contains supporting files/framework/libraries
-//
-// This program makes use of the following open source libraries and frameworks: ics.js, pure.io
-//
+// Main program code for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter.
+// Open index.html in a web browser for demo page. The resources directory contains supporting files/frameworks/libraries.
+// This program makes use of the following open source libraries and frameworks: ics.js, pure.io.
 // ==========================================================
 
 // Global variables
 var eventSummary, eventBegin, eventEnd, eventDescription // Vars for event field data
 var inputGood // Whether user's input is acceptable
-
+var endDateType // Track whether relative or absolute dates in use
 
 // Patterns to match from user's input
 var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b"
-var regExMonth = "\\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\b"
 var relativeDate = "((?:next|last|this) (?:week|month|year)|tom(?:orrow)?|tmrw|tod(?:ay)?|(?:right )?now|tonight|day after (?:tom(?:orrow)?|tmrw)|yest(?:erday)?|day before yest(?:erday)?)|this|next"
 var dateTimeRange = "(-)|(to)|(and)"
 
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
 function liveUpdate() {
-	// Get user's input from textbox and initially assume it's acceptable
+	// Get user's input from textbox and initially assume it's acceptable, and that date is an absolute date
 	var userInput = document.getElementById("userInput").value;
 	inputGood = 1;
+	endDateType = "absolute"
 	
 	if (userInput) // Hide live output area if input is empty
-	document.getElementById("output").hidden = false;
-	else
-	document.getElementById("output").hidden = true;
+	document.getElementById("output").hidden = (userInput) ? false : true;
 	
 	// Call parsing functions
 	splitAtPeriod(userInput);
@@ -50,72 +46,75 @@ function splitSummaryDate(input){
 	
 	// Split summary from rest of input
 	if (input.search(' on ') > 0)
-	var splitted = input.split(' on ')
+	var splitted = input.split(' on ');
 	else if (input.search(' at ') > 0)
-	var splitted = input.split(' at ')
+	var splitted = input.split(' at ');
 	else if (input.search(' by ') > 0)
-	var splitted = input.split(' by ')
+	var splitted = input.split(' by ');
 	else if (input.search(' from ') > 0)
-	var splitted = input.split(' from ')
+	var splitted = input.split(' from ');
 	else if (input.search(' between') > 0)
-	var splitted = input.split(' between ')
+	var splitted = input.split(' between ');
 	else { // If no summary-date separator in input, error
-		eventSummary = input
-		eventBegin = error("Could not find summary-date separator (Error S1)")
-		eventEnd = "No date or time"
+		eventSummary = input;
+		eventBegin = error("Could not find summary-date separator (Error S1)");
+		eventEnd = "No date or time";
 		return
 	}
 	
-	eventSummary = splitted[0]
+	eventSummary = splitted[0];
 	parseDateTime(splitted[1]);	
 	
 	// Store notices if certain fields are missing from input
 	if (!eventSummary)
-	eventSummary = "Untitled Event"	
+	eventSummary = "Untitled Event";
 	if (!eventBegin)
-	eventBegin = "No date or time"
+	eventBegin = "No date or time";
 	if (!eventEnd)
-	eventEnd = "No date or time"
+	eventEnd = "No date or time";
+	return
 }
 
 // Convert date/time from input into date object
 function parseDateTime(input) {
 	
-	if (input.match(relativeDate)){
-		parseRelativeDateTime(input);
-		return;
-		} else if (input.match(dateTimeRange)){
-		parseDateTimeRange(input);
-		return;
-		} else {
+	if (input.match(relativeDate))
+	parseRelativeDateTime(input);
+	else if (input.match(dateTimeRange))
+	parseDateTimeRange(input);
+	else {
 		eventBegin = parseAbsoluteDateTime(input);
 		eventEnd = parseAbsoluteDateTime(input);
 		
 		if (typeof eventEnd === Date)
 		eventEnd.setHours(eventEnd.getHours() + 1); //Default event length is 1hr
-		
-		return;
 	}
+	return;
 }
 
 // TODO
 function parseRelativeDateTime(input){
 	
-	var date = new Date() // Date Time to modify
+	endDateType = "relative"; // Set date type abs -> rel
+	var date = new Date(); // Date Time to modify
 	
 	relativeDateMatch = input.match(relativeDate)[0];
 	
 	if (relativeDateMatch === 'tomorrow'){
 		date.setDate(date.getDate() + 1);
-		date.setHours(9, 0, 0) // Default time to 9am
-		} else if (relativeDateMatch === 'today'){
+		date.setHours(9, 0, 0); // Default time to 9am
+	} 
+	else if (relativeDateMatch === 'today') {
 		date.setHours(date.getHours() + 2);
-		} else if (relativeDateMatch === 'this'){
-		dayOfWeek = input.split('this ')[1]
-		date = parseAbsoluteDateTime(dayOfWeek)
-		} else if (relativeDateMatch === 'next'){
-		dayOfWeek = input.split('next ')[1]
-		date = parseAbsoluteDateTime(dayOfWeek)
+	} 
+	else if (relativeDateMatch === 'this') {
+		dayOfWeek = input.split('this ')[1];
+		date = parseAbsoluteDateTime(dayOfWeek);
+	} 
+	else if (
+		relativeDateMatch === 'next'){
+		dayOfWeek = input.split('next ')[1];
+		date = parseAbsoluteDateTime(dayOfWeek);
 		date.setDate(date.getDate() + 7);
 	}
 	
@@ -136,6 +135,13 @@ function parseDateTimeRange(input){
 	eventBegin = parseAbsoluteDateTime(splitted[0]);
 	eventEnd = parseAbsoluteDateTime(splitted[1]);
 	
+	// Ensure end date is after start date.
+	if (eventBegin > eventEnd)	
+	if (endDateType == "relative")
+	eventEnd.setDate(eventEnd.getDate() + 7)
+	else
+	eventEnd = error("<i>" + formatDate(eventEnd) + "</i> precedes start date (Error D3)");
+	
 	return;
 }
 
@@ -144,41 +150,42 @@ function parseAbsoluteDateTime(input){
 	if (!input || input == " ")
 	return error("Could not find a date value (Error D1)")
 	
-	const referenceDate = new Date() // Reference Date
-	var date = new Date() // Date Time to modify
-	date.setHours(9, 0, 0) // Default time to 9am
+	const referenceDate = new Date(); // Reference Date
+	var date = new Date(); // Date Time to modify
+	date.setHours(9, 0, 0); // Default time to 9am
 	
 	// Try to initially create a Date Time object using constructor, return if successful
-	var dateAttempt = new Date(input)
+	var dateAttempt = new Date(input);
 	if (dateAttempt != 'Invalid Date')
 	return dateAttempt;
 	
-	// If no good, try to parse as a relative date
-	dayMatchArray = input.toLowerCase().match(regExDayofWeek) 
-	
+	// If no good, try to parse it as a relative date
+	dayMatchArray = input.toLowerCase().match(regExDayofWeek);	
 	if (dayMatchArray)
-	return setDateByDayOfWeek(date, dayMatchArray, referenceDate)
+	date = setDateByDayOfWeek(date, dayMatchArray, referenceDate);
 	else
-	return error("Could not parse <i>" + input + "</i> as a date (Error D2)") // Date is unrecognizable
+	date = error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
+	
+	return date
 }
 
 function setDateByDayOfWeek(date, dayMatchArray, referenceDate){	
 	dayOfWeek = dayMatchArray[0].toLowerCase();
 	
-	// Match day of week from input
-	if (dayOfWeek.startsWith('sun'))
+	// Match day of week from input w/ regex
+	if (dayOfWeek.match('\\b(sun)(?:day)?\\b'))
 	numberOfWeek = 0;
-	else if (dayOfWeek.startsWith('mon'))
+	else if (dayOfWeek.match('\\b(mon)(?:day)?\\b'))
 	numberOfWeek = 1;
-	else if (dayOfWeek.startsWith('tue'))
+	else if (dayOfWeek.match('\\b(tue(?:s)?)(?:day)?\\b'))
 	numberOfWeek = 2;
-	else if (dayOfWeek.startsWith('wed'))
+	else if (dayOfWeek.match('\\b(wed(?:nes)?)(?:day)?\\b'))
 	numberOfWeek = 3;
-	else if (dayOfWeek.startsWith('thu'))
+	else if (dayOfWeek.match('\\b(thu(?:rs?)?)(?:day)?\\b'))
 	numberOfWeek = 4;
-	else if (dayOfWeek.startsWith('fri'))
+	else if (dayOfWeek.match('\\b(fri)(?:day)?\\b'))
 	numberOfWeek = 5;
-	else if (dayOfWeek.startsWith('sat'))
+	else if (dayOfWeek.match('\\b(sat(?:ur)?)(?:day)?\\b'))
 	numberOfWeek = 6;
 	else
 	numberOfWeek = -1;	
@@ -211,13 +218,6 @@ function generateICS(arg) {
 
 // Format live output HTML
 function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {	
-	// Format date and time in en-US locale (try catch required since variable may contain non-date object)
-	const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-	try {eventBegin = eventBegin.toLocaleDateString("en-US", options) + ' ' + eventBegin.toLocaleTimeString();}
-	catch {}
-	try {eventEnd = eventEnd.toLocaleDateString("en-US", options) + ' ' + eventEnd.toLocaleTimeString();}
-	catch {}
-	
 	// Disable download button if the current input is unacceptable and update help text
 	if (!inputGood) {
 		document.getElementById("btnDownload").disabled = true;
@@ -230,15 +230,25 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 	
 	// Return the parsed data in a user-friendly way for real-time display on page
 	return '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
-	'</span></li><li id="output-date-start">Date Start: <span class="output">' + eventBegin +
-	'</span></li><li id="output-date-end">Date End: <span class="output">' + eventEnd + 
+	'</span></li><li id="output-date-start">Date Start: <span class="output">' + formatDate(eventBegin) +
+	'</span></li><li id="output-date-end">Date End: <span class="output">' + formatDate(eventEnd) + 
 	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
 	'</span></li>';
 }
 
+
+// Format date and time in en-US locale (try catch required since variable may contain non-date object) 
+function formatDate(date) {	
+	const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+	try {date = date.toLocaleDateString("en-US", options) + ' ' + date.toLocaleTimeString();}
+	catch {}
+	
+	return date
+}
+
 // Format error strings in red and mark input as no good
 function error(errorString) {
-	inputGood = 0 // Mark user input as unacceptable once error occurs
+	inputGood = 0; // Mark user input as unacceptable once error occurs
 	
 	// Format HTML error msg with CSS class
 	if (!errorString) // If blank argument received, use default error message
@@ -259,12 +269,11 @@ function onLoad() {
 	document.getElementById('userInput').value = inputString; 
 	liveUpdate();
 	
-	if (previewOnly != null)
-	generateICS(0); // Preview only if &preview argument is also present
-	else
-	generateICS(1); // Otherwise download
+	// Preview only if "&p" argument is also present, otherwise download
+	generateICS((previewOnly != null) ? 0 : 1); 
 }
 
+// Temporary: for automated testing during development
 module.exports = {
 	eventSummary, 
 	eventBegin, 
