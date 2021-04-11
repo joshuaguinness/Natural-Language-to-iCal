@@ -44,6 +44,15 @@ test("parseAbsoluteDateTime: date slash format", () => {
     expect(event.toDateString()).toBe(expected)
 })
 
+test("parseAbsoluteDateTime: date slash format", () => {
+    const input = "4/6";
+    let event = parser.parseAbsoluteDateTime(input);
+    let expected = new Date();
+    expected.setDate(6);
+    expected.setMonth(3);
+    expect(event.toDateString()).toBe(expected.toDateString())
+})
+
 test("parseAbsoluteDateTime: date written format", () => {
     const input = "Apr 12";
     let event = parser.parseAbsoluteDateTime(input);
@@ -67,4 +76,9 @@ test("parseAbsoluteDateTime: test error handling", () => {
     let event = parser.parseAbsoluteDateTime(input);
     const expected = "<span class=\"output-error\">Could not parse <i>test</i> as a date (Error D2)</span>";
     expect(event).toBe(expected);
+})
+
+// parseDateTimeRange tests
+test("parseDateTimeRange", () => {
+    
 })
