@@ -160,17 +160,13 @@ function parseAbsoluteDateTime(input){
 	
 	// Try to initially create a Date Time object using constructor
 	var dateAttempt = new Date(input);
-	if (dateAttempt != 'Invalid Date') {
-		// If successful, check to see if date is in the past and adjust year if user didn't explicitly specify a prior year
-		if ((dateAttempt < referenceDate) && (dateAttempt.getFullYear() == referenceDate.getFullYear()))
-		dateAttempt.setFullYear(dateAttempt.getFullYear() + 1);
-		return dateAttempt;
-	}
+	if (dateAttempt != 'Invalid Date')
+	return dateAttempt;
 	
 	// If fail, add year and retry
 	dateAttempt = new Date(input + " " + referenceDate.getFullYear());
 	if (dateAttempt != 'Invalid Date') {
-		// If successful, check to see if date is in the past and adjust year if user didn't explicitly specify a prior year
+		// If successful, check to see if the date has already passed this year, and if so, change year to next year
 		if ((dateAttempt < referenceDate) && (dateAttempt.getFullYear() == referenceDate.getFullYear()))
 		dateAttempt.setFullYear(dateAttempt.getFullYear() + 1);
 		return dateAttempt;
@@ -217,8 +213,9 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 }
 
 // Generate properly formatted .ICS file (once user hits enter or clicks download btn. Arg 1 = download, arg 0 = view only
-function generateICS(arg) {		
-	// Build the iCalendar file using ics.js library and parsed data. 
+function generateICS(arg) {
+	// Rerun converter to refresh variables then build the iCalendar file using ics.js library and parsed data. 
+	liveUpdate();
 	
 	// If all-day event, set end date to be midnight of the day after the user's entered end day (per iCal spec).
 	if (allDay)
