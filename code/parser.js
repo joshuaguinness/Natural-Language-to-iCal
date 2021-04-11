@@ -373,16 +373,20 @@ function onLoad() {
 }
 
 // Temporary: for automated testing during development
+function getEventBegin() { return eventBegin; }
+function getEventEnd() { return eventEnd; }
+function getEventDescription() { return eventDescription; }
+function getEventSummary() { return eventSummary; }
+
 module.exports = {
-	eventSummary, 
-	eventBegin, 
-	eventEnd, 
-	eventDescription, 
 	splitAtPeriod, 
 	splitSummaryDate, 
-	parseDateTime, 
 	parseRelativeDateTime,
 	parseDateTimeRange, 
 	parseAbsoluteDateTime, 
-	setDateByDayOfWeek
+	setDateByDayOfWeek,
+	getEventBegin,
+	getEventEnd,
+	getEventDescription,
+	getEventSummary
 }
