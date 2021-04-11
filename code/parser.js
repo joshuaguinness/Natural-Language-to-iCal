@@ -286,5 +286,4 @@ module.exports = {
 	parseDateTimeRange, 
 	parseAbsoluteDateTime, 
 	setDateByDayOfWeek, 
-	generateICS
 }
