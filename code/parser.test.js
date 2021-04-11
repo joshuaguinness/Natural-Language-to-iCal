@@ -2,10 +2,10 @@ const parser = require("./parser");
 
 // TODO: Create tests for regex
 // TODO: Create tests for end date before start date
-// TODO: Test parseRelativeDateTime
 // TODO: Test parseDateTime
 // TODO: Test splitSummaryDate
 // TODO: Test splitAtPeriod
+// TODO: Test timeDecision
 
 // setDateByDayOfWeek tests
 test("setDateByDayOfWeek: set event to day of the week ", () => {
