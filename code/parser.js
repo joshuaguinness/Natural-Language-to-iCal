@@ -179,11 +179,9 @@ function parseAbsoluteDateTime(input){
 	// If no good, try to parse it as a relative date
 	dayMatchArray = input.toLowerCase().match(regExDayofWeek);	
 	if (dayMatchArray)
-	date = setDateByDayOfWeek(date, dayMatchArray, referenceDate);
+	return setDateByDayOfWeek(date, dayMatchArray, referenceDate);
 	else
-	date = error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
-	
-	return date
+	return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
 }
 
 function setDateByDayOfWeek(date, dayMatchArray, referenceDate){	
@@ -315,6 +313,5 @@ module.exports = {
 	parseRelativeDateTime,
 	parseDateTimeRange, 
 	parseAbsoluteDateTime, 
-	setDateByDayOfWeek, 
-	generateICS
+	setDateByDayOfWeek
 }
