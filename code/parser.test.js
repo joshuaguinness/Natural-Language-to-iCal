@@ -128,6 +128,16 @@ test("parseRelativeDateTime: relative date \"tomorrow\"", () => {
     expect(parser.getEventBegin().getTime()).toBe(expected.getTime());
 })
 
+test("parseRelativeDateTime: relative date \"today\"", () => {
+    const input = "today at 10 AM";
+    let expected = new Date();
+    expected.setHours(10, 0, 0);
+
+    parser.parseRelativeDateTime(input);
+    expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
+    expect(parser.getEventBegin().getTime()).toBe(expected.getTime());
+})
+
 test("parseRelativeDateTime: relative date \"next\"", () => {
     const input = "next tuesday at 10 AM";
     const referenceDate = new Date();
