@@ -6,7 +6,6 @@
 // Global variables
 var eventSummary, eventBegin, eventEnd, eventDescription // Vars for event field data
 var inputGood // Whether user's input is acceptable
-var endDateType // Track whether relative or absolute dates in use
 var allDay // Track whether event is an all-day event (no time specified)
 
 // Patterns to match from user's input
@@ -20,7 +19,6 @@ function liveUpdate() {
 	var userInput = document.getElementById("userInput").value;
 	inputGood = 1; // Initially assume user's input is acceptable
 	allDay = 1; // And that the event is an all-day event
-	endDateType = "absolute" // And that the user is entering dates as absolute dates
 	
 	if (userInput) // Hide live output area if input is empty
 	document.getElementById("output").hidden = (userInput) ? false : true;
@@ -49,43 +47,45 @@ function splitSummaryDate(input){
 
 	// A separator can be found for Summary and DateTime
 	var summaryDateSeparator = false;
-
 	var splitted;
 	
 	// (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime
-	if (input.search(' on ') > 0){
+	if (input.search(' on ') >= 0){
 		summaryDateSeparator = true;
 		splitted = input.split(' on ')
 		if (input.match(relativeDate)){
 			parseRelativeDateTime(splitted[1])
 		} else {
 			eventBegin = parseAbsoluteDateTime(splitted[1])
+			eventEnd = parseAbsoluteDateTime(splitted[1])
+			// If not all day event, then set end time 1 hr after start time
+			allDay === 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null;
 		}
-	} else if (input.search(' by ') > 0){
+	} else if (input.search(' by ') >= 0){
 		summaryDateSeparator = true;
 		splitted = input.split(' by ')
 		if (input.match(relativeDate)){
 			parseRelativeDateTime(splitted[1])
 		} else {
 			eventBegin = parseAbsoluteDateTime(splitted[1])
+			eventEnd = parseAbsoluteDateTime(splitted[1])
+			allDay === 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null;
 		}
 	}
 
 	// ('from' | 'between') DateTimeRange
-	if (input.search(' from ') > 0 ) {
+	if (input.search(' from ') >= 0 ) {
 		summaryDateSeparator = true;
 		splitted = input.split(' from ');
 		parseDateTimeRange(splitted[1]);
-	} else if (input.search(' between') > 0) {
+	} else if (input.search(' between') >= 0) {
 		summaryDateSeparator = true;
 		splitted = input.split(' between ');
 		parseDateTimeRange(splitted[1]);
 	}
 
 	console.log(eventBegin)
-
-	eventEnd = eventBegin;
-	// eventEnd.setHours(eventEnd.getHours() + 1); //Default event length is 1hr
+	console.log(eventEnd)
 	
 	// If no summary-date separator in input, error
 	if (summaryDateSeparator === false) {
@@ -94,7 +94,7 @@ function splitSummaryDate(input){
 		eventEnd = "No date or time";
 		return
 	}
-	
+
 	eventSummary = splitted[0]
 	
 	// Store notices if certain fields are missing from input
@@ -106,29 +106,13 @@ function splitSummaryDate(input){
 	eventEnd = "No date or time"
 }
 
-// Convert date/time from input into date object
-// function parseDateTime(input) {
-	
-// 	if (input.match(relativeDate))
-// 	parseRelativeDateTime(input);
-// 	else if (input.match(dateTimeRange))
-// 	parseDateTimeRange(input);
-// 	else {
-// 		eventBegin = parseAbsoluteDateTime(input);
-// 		eventEnd = parseAbsoluteDateTime(input);
-		
-// 		if (typeof eventEnd === Date)
-// 		eventEnd.setHours(eventEnd.getHours() + 1); //Default event length is 1hr
-// 	}
-// 	return;
-// }
-
+// AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]
 function parseAbsoluteDateTime(input){
 	// If date is missing altogether, reject
 	if (!input || input == " ")
 	return error("Could not find a date value (Error D1)")
 	
-	const referenceDate = new Date(); // Reference Date
+	// const referenceDate = new Date(); // Reference Date
 	var date = new Date(); // Date Time to modify
 
 	var splitted = input.split(' at ');
@@ -144,6 +128,8 @@ function parseAbsoluteDateTime(input){
 		// Add time
 		allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
 		return date
+	} else {
+		return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
 	}
 
 	// If fail, add year and retry
@@ -154,16 +140,18 @@ function parseAbsoluteDateTime(input){
 	// 	dateAttempt.setFullYear(dateAttempt.getFullYear() + 1);
 	// 	return dateAttempt;
 	// }
-	
+
 	// If no good, try to parse it as a relative date
 	// dayMatchArray = input.toLowerCase().match(regExDayofWeek);	
 	// if (dayMatchArray)
 	// return setDateByDayOfWeek(date, dayMatchArray, referenceDate);
 	// else
 	// return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
+
 }
 
 // Recognizes relative date strings from input and creates date object
+// RelativeDateTime -> RelativeDate [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]
 function parseRelativeDateTime(input){
 	
 	endDateType = "relative"; // Set date type abs -> rel
@@ -193,26 +181,23 @@ function parseRelativeDateTime(input){
 		date.setDate(date.getDate() + 7);
 	}
 
+	// [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]
 	var splitted;
-	console.log(input)
 	if (input.search('at') >= 0){
-		console.log('at')
 		splitted = input.split(' at ')
 		date = timeDecision(date, splitted[1])
 	} else if (input.search('in the') >= 0){
-		console.log('in the')
 		splitted = input.split(' in the ')
 		console.log(splitted[1])
 		date = timeDecision(date, splitted[1])
 	}
-	console.log("Here");
 	eventBegin = date;	
-	eventEnd = date;
-	// eventEnd.setHours(eventEnd.getHours() + 1); //Default event length is 1hr	
+	eventEnd = new Date(date);
+	allDay === 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null;
 	return;
 }
 
-// Split the Date Time Range at one of the keywords
+// DateTimeRange -> AbsoluteDateTime (' - ' | ' to ' | ' and ') AbsoluteDateTime
 function parseDateTimeRange(input){
 	
 	// Match the regex and split on that match
@@ -224,11 +209,9 @@ function parseDateTimeRange(input){
 	eventEnd = parseAbsoluteDateTime(splitted[1]);
 	
 	// Ensure end date is after start date.
-	// if (eventBegin > eventEnd)
-	// if (endDateType == "relative")
-	// eventEnd.setDate(eventEnd.getDate() + 7)
-	// else
-	// eventEnd = error("<i>" + formatDate(eventEnd) + "</i> precedes start date (Error D3)");
+	if (eventBegin > eventEnd){
+		eventEnd = error("<i>" + formatDate(eventEnd) + "</i> precedes start date (Error D3)");
+	}
 	
 	return;
 }
@@ -238,6 +221,7 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 	dayOfWeek = dayMatchArray[0].toLowerCase();
 	
 	// Match day of week from input w/ regex
+	// DayOfWeek -> 'Mon' ['day'] | ... | 'Sun' ['day']
 	if (dayOfWeek.match('\\b(sun)(?:day)?\\b'))
 	numberOfWeek = 0;
 	else if (dayOfWeek.match('\\b(mon)(?:day)?\\b'))
@@ -267,6 +251,8 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 
 // Sets the time depending on input
 function timeDecision(date, input) {
+
+	allDay = 0;
 
 	// AbsoluteTime -> MonthNumber ('am'| 'pm')
 	if (input.search('am') >= 0){
