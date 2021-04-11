@@ -7,18 +7,20 @@
 var eventSummary, eventBegin, eventEnd, eventDescription // Vars for event field data
 var inputGood // Whether user's input is acceptable
 var endDateType // Track whether relative or absolute dates in use
+var allDay // Track whether event is an all-day event (no time specified)
 
 // Patterns to match from user's input
 var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b"
-var relativeDate = "((?:next|last|this) (?:week|month|year)|tom(?:orrow)?|tmrw|tod(?:ay)?|(?:right )?now|tonight|day after (?:tom(?:orrow)?|tmrw)|yest(?:erday)?|day before yest(?:erday)?)|this|next"
-var dateTimeRange = "(-)|(to)|(and)"
+var relativeDate = "\\b(tom(?:orrow)?|tmrw|today|next|this)\\b"
+var dateTimeRange = "\\b(-)|( to )|( and )\\b"
 
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
 function liveUpdate() {
-	// Get user's input from textbox and initially assume it's acceptable, and that date is an absolute date
+	// Get user's input from textbox and initialize global variables
 	var userInput = document.getElementById("userInput").value;
-	inputGood = 1;
-	endDateType = "absolute"
+	inputGood = 1; // Initially assume user's input is acceptable
+	allDay = 1; // And that the event is an all-day event
+	endDateType = "absolute" // And that the user is entering dates as absolute dates
 	
 	if (userInput) // Hide live output area if input is empty
 	document.getElementById("output").hidden = (userInput) ? false : true;
@@ -92,22 +94,24 @@ function parseDateTime(input) {
 	return;
 }
 
-// TODO
+// Recognizes relative date strings from input and creates date object
 function parseRelativeDateTime(input){
 	
 	endDateType = "relative"; // Set date type abs -> rel
 	var date = new Date(); // Date Time to modify
 	
-	relativeDateMatch = input.match(relativeDate)[0];
+	allDay = 1;
 	
-	if (relativeDateMatch === 'tomorrow'){
+	relativeDateMatch = input.match(relativeDate)[0].toLowerCase();
+	
+	if (relativeDateMatch.match('\\b(tom(?:orrow)?|tmrw)\\b')){
 		date.setDate(date.getDate() + 1);
-		date.setHours(9, 0, 0); // Default time to 9am
+		//date.setHours(9, 0, 0); // Default time to 9am
 	} 
-	else if (relativeDateMatch === 'today') {
+	else if (relativeDateMatch.match('\\b(today)\\b')){
 		date.setHours(date.getHours() + 2);
 	} 
-	else if (relativeDateMatch === 'this') {
+	else if (relativeDateMatch === 'this') { //TODO This/Next modifiers aren't working.. or just remove if we run out of time...
 		dayOfWeek = input.split('this ')[1];
 		date = parseAbsoluteDateTime(dayOfWeek);
 	} 
@@ -136,7 +140,7 @@ function parseDateTimeRange(input){
 	eventEnd = parseAbsoluteDateTime(splitted[1]);
 	
 	// Ensure end date is after start date.
-	if (eventBegin > eventEnd)	
+	if (eventBegin > eventEnd)
 	if (endDateType == "relative")
 	eventEnd.setDate(eventEnd.getDate() + 7)
 	else
@@ -154,10 +158,23 @@ function parseAbsoluteDateTime(input){
 	var date = new Date(); // Date Time to modify
 	date.setHours(9, 0, 0); // Default time to 9am
 	
-	// Try to initially create a Date Time object using constructor, return if successful
+	// Try to initially create a Date Time object using constructor
 	var dateAttempt = new Date(input);
-	if (dateAttempt != 'Invalid Date')
-	return dateAttempt;
+	if (dateAttempt != 'Invalid Date') {
+		// If successful, check to see if date is in the past and adjust year if user didn't explicitly specify a prior year
+		if ((dateAttempt < referenceDate) && (dateAttempt.getFullYear() == referenceDate.getFullYear()))
+		dateAttempt.setFullYear(dateAttempt.getFullYear() + 1);
+		return dateAttempt;
+	}
+	
+	// If fail, add year and retry
+	dateAttempt = new Date(input + " " + referenceDate.getFullYear());
+	if (dateAttempt != 'Invalid Date') {
+		// If successful, check to see if date is in the past and adjust year if user didn't explicitly specify a prior year
+		if ((dateAttempt < referenceDate) && (dateAttempt.getFullYear() == referenceDate.getFullYear()))
+		dateAttempt.setFullYear(dateAttempt.getFullYear() + 1);
+		return dateAttempt;
+	}
 	
 	// If no good, try to parse it as a relative date
 	dayMatchArray = input.toLowerCase().match(regExDayofWeek);	
@@ -170,6 +187,7 @@ function parseAbsoluteDateTime(input){
 }
 
 function setDateByDayOfWeek(date, dayMatchArray, referenceDate){	
+	endDateType = "relative"; // Set date type abs -> rel
 	dayOfWeek = dayMatchArray[0].toLowerCase();
 	
 	// Match day of week from input w/ regex
@@ -202,9 +220,15 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 
 // Generate properly formatted .ICS file (once user hits enter or clicks download btn. Arg 1 = download, arg 0 = view only
 function generateICS(arg) {		
-	// Build the iCalendar file using ics.js library and parsed data. If no description, use empty string for file rather than "No description"
+	// Build the iCalendar file using ics.js library and parsed data. 
+	
+	// If multi-day all-day event, set end date to be midnight of the day after the user's entered end day (per iCal spec).
+	// if (allDay)
+	// eventEnd.setDate(eventEnd.getDate() + 1);
+	
+	// If no description, use empty string for file rather than "No description"
 	icalOutput = ics();
-	icalOutput.addEvent(eventSummary, eventDescription == "No description" ? '' : eventDescription, '', eventBegin, eventEnd);
+	icalOutput.addEvent(eventSummary, eventDescription == "No description" ? '' : eventDescription, '', formatDate(eventBegin), formatDate(eventEnd));
 	
 	// Give user the .ics or display the preview
 	if (arg) {
@@ -239,10 +263,16 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 
 // Format date and time in en-US locale (try catch required since variable may contain non-date object) 
 function formatDate(date) {	
-	const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-	try {date = date.toLocaleDateString("en-US", options) + ' ' + date.toLocaleTimeString();}
-	catch {}
-	
+	if (allDay) {
+		const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+		try {date = date.toLocaleDateString("en-US", options);}
+		catch {}
+	}
+	else {
+		const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+		try {date = date.toLocaleDateString("en-US", options) + ' ' + date.toLocaleTimeString();}
+		catch {}
+	}
 	return date
 }
 
@@ -286,5 +316,4 @@ module.exports = {
 	parseDateTimeRange, 
 	parseAbsoluteDateTime, 
 	setDateByDayOfWeek, 
-	generateICS
-}
+}	
