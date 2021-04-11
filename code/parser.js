@@ -112,7 +112,6 @@ function parseAbsoluteDateTime(input){
 	if (!input || input == " ")
 	return error("Could not find a date value (Error D1)")
 	
-	
 	const referenceDate = new Date(); // Reference Date
 	var date = new Date(); // Date Time to modify
 	
@@ -123,85 +122,40 @@ function parseAbsoluteDateTime(input){
 		allDay = 0
 	}
 	
-	
-	// Check useragent to see if Firefox/Chromium due to differences between browsers in date() implementation. Unfortuantely unavoidable.
-	if (navigator.userAgent.indexOf("Firefox") != -1 ) {
-		// Try to initially create a Date Time object using input as-is
-		var dateAttempt = new Date(input);
-		if (dateAttempt != 'Invalid Date') {
-			// Add time
-			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
-			return date
-		}
+	// Try to initially create a Date Time object using input as-is (assume user has provided full date incl year)
+	var date = new Date(splitted[0]);
+	// alert(dateAttempt.getFullYear())
+	if ((date == 'Invalid Date') || (date.getFullYear() < 2002)) {
+		console.log("Trying to parse date as-provided failed:\n" + input + " -> " + date);
 		
-		// If fail, add current year and retry (in case user entered MM/DD)
-		dateAttempt = new Date(input + " " + referenceDate.getFullYear());
-		if (dateAttempt != 'Invalid Date') {
-			// If successful, check to see if the date has already passed this year, and if so, change year to next year
-			if (dateAttempt < referenceDate)
-			dateAttempt.setFullYear(referenceDate.getFullYear() + 1);
-			
-			
-			// Add time
-			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
-			return date
-		}
-	}
-	else if(navigator.userAgent.indexOf("Chrome") != -1) { // Chromium/Webkit
-		// Try to initially create a Date Time object using input as-is
-		var dateAttempt = new Date(input);
+		// If can't parse as-provided, insert current year and retry (in case user entered 01/23 or Jan 23 with implied year)
+		date = new Date(splitted[0] + " " + referenceDate.getFullYear());
 		
-		if (dateAttempt != 'Invalid Date') {
-			if (dateAttempt < referenceDate) {
-				dateAttempt.setFullYear(referenceDate.getFullYear());
-				if (dateAttempt != 'Invalid Date')
-				if (dateAttempt < referenceDate)
-				dateAttempt.setFullYear(referenceDate.getFullYear() + 1);
-				
-				
+		// Adding year and parsing was successful if the input had at least one digit and the output is a valid date.
+		// Now check to see if the date has already passed this year, and if so, change implied year to be next year
+		if (date != 'Invalid Date' && (/\d/.test(splitted[0]))) {
+			console.log("Trying with current year added worked:\n" + splitted[0] + " " + referenceDate.getFullYear() + " -> " + date);
+			if (date < referenceDate) {
+				date.setFullYear(referenceDate.getFullYear() + 1);
+				console.log("But that date has passed, so assuming next year:\n" + date);
 			}
-			// Add time
-			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
-			return date
 		}
-	}
-	else { // For other browsers incl Safari
-		// Try to initially create a Date Time object using input as-is
-		var dateAttempt = new Date(input);
-		
-		if (dateAttempt != 'Invalid Date') {
-			if (dateAttempt < referenceDate) {
-				dateAttempt = new Date(input + " " + referenceDate.getFullYear());
-				if (dateAttempt != 'Invalid Date')
-				if (dateAttempt < referenceDate)
-				dateAttempt.setFullYear(referenceDate.getFullYear() + 1);
-				
-				
-			}
-			// Add time
-			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
-			return date
-		}
-		else
-		// If fail, add current year and retry (in case user entered MM/DD)
-		dateAttempt = new Date(input + " " + referenceDate.getFullYear());
-		if (dateAttempt != 'Invalid Date') {
-			// If successful, check to see if the date has already passed this year, and if so, change year to next year
-			if (dateAttempt < referenceDate)
-			dateAttempt.setFullYear(referenceDate.getFullYear() + 1);
+		else {
+			// If adding implied year still didn't work, try to parse input as a relative date instead (tomorrow, friday, etc)
+			console.log("Trying with current year added also failed:\n" + splitted[0] + " " + referenceDate.getFullYear() + " -> " + date);
 			
-			// Add time
-			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
-			return date
+			dayMatchArray = splitted[0].toLowerCase().match(regExDayofWeek);	
+			if (dayMatchArray)
+			date = setDateByDayOfWeek(date, dayMatchArray, referenceDate);
+			else
+			date = error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
 		}
 	}
 	
-	// If no good, try to parse it as a relative date
-	dayMatchArray = input.toLowerCase().match(regExDayofWeek);	
-	if (dayMatchArray)
-	return setDateByDayOfWeek(date, dayMatchArray, referenceDate);
-	else
-	return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
+	// If a time value is also provided, parse that separately and return.
+	if (allDay === 0)
+	date = timeDecision(date, splitted[1])	
+	return date
 }
 
 
@@ -305,8 +259,7 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 }
 
 // Sets the time depending on input
-function timeDecision(date, input) {
-	
+function timeDecision(date, input) {	
 	allDay = 0;
 	
 	// AbsoluteTime -> MonthNumber ('am'| 'pm')
