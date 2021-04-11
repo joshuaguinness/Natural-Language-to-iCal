@@ -125,7 +125,7 @@ test("parseRelativeDateTime: relative date \"tomorrow\"", () => {
 
     parser.parseRelativeDateTime(input);
     expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
-    expect(parser.getEventBegin().getTime()).toBe(expected.getTime());
+    expect(parser.getEventBegin().toTimeString()).toBe(expected.toTimeString());
 })
 
 test("parseRelativeDateTime: relative date \"today\"", () => {
@@ -135,7 +135,7 @@ test("parseRelativeDateTime: relative date \"today\"", () => {
 
     parser.parseRelativeDateTime(input);
     expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
-    expect(parser.getEventBegin().getTime()).toBe(expected.getTime());
+    expect(parser.getEventBegin().toTimeString()).toBe(expected.toTimeString());
 })
 
 test("parseRelativeDateTime: relative date \"next\"", () => {
@@ -149,5 +149,5 @@ test("parseRelativeDateTime: relative date \"next\"", () => {
 
     parser.parseRelativeDateTime(input);
     expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
-    expect(parser.getEventBegin().getTime()).toBe(expected.getTime());
+    expect(parser.getEventBegin().toTimeString()).toBe(expected.toTimeString());
 })
