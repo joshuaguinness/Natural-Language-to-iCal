@@ -11,6 +11,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">		
 		
 		<link type="image/x-icon" rel="shortcut icon" href="resources/favicon.png"/>
+		<meta name="theme-color" content="#000000">
 		<link rel="stylesheet" href="resources/style.css"/>
 		<script type="text/javascript" src="resources/ics.js"></script>
 		<script type="text/javascript" src="parser.js"></script>
@@ -46,12 +47,12 @@
 					
 					<!-- Temporary: Selection of valid and invalid sample inputs for development & testing --> 
 					Sample Inputs: 
-					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Complete project by Mon, Apr 12. Submit everything on Gitlab'; liveUpdate()">1</button>
-					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Project presentations from April 3 to April 6. Prepare slides'; liveUpdate()">2</button>
-					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Submit lab on next tuesday at 10 am. Worth 10 marks'; liveUpdate()">3</button>
-					<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is an invalid input because there is no date or time.'; liveUpdate()">4</button>
-					<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is also invalid from  to frday. Due to bad date values'; liveUpdate()">5</button>
-					<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is no good either between 1/31-1/30. Because of the invalid date range'; liveUpdate()">6</button>
+					<button type="button" class="pure-button pure-button-blue" onclick="sampleInput(1)">1</button>
+					<button type="button" class="pure-button pure-button-blue" onclick="sampleInput(2)">2</button>
+					<button type="button" class="pure-button pure-button-blue" onclick="sampleInput(3)">3</button>
+					<button type="button" class="pure-button pure-button-orange" onclick="sampleInput(4)">4</button>
+					<button type="button" class="pure-button pure-button-orange" onclick="sampleInput(5)">5</button>
+					<button type="button" class="pure-button pure-button-orange" onclick="sampleInput(6)">6</button>
 				</form>
 				
 				<!-- Live Update output section hidden by default and when input is blank --> 
