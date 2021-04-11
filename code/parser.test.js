@@ -98,8 +98,12 @@ test("parseDateTimeRange: date range", () => {
 
 test("parseDateTimeRange: date range without year", () => {
     const input = "April 12 to April 20";
-    const expectedBegin = new Date("April 12");
-    const expectedEnd = new Date("April 20");
+    const currentYear = new Date().getFullYear();
+    let expectedBegin = new Date("April 12");
+    expectedBegin.setFullYear(currentYear);
+    let expectedEnd = new Date("April 20");
+    expectedEnd.setFullYear(currentYear);
+    
     parser.parseDateTimeRange(input);
     expect(parser.getEventBegin().toDateString()).toBe(expectedBegin.toDateString());
     expect(parser.getEventEnd().toDateString()).toBe(expectedEnd.toDateString());
