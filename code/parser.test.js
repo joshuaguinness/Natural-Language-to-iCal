@@ -87,6 +87,11 @@ test("parseAbsoluteDateTime: test error handling", () => {
 })
 
 // parseDateTimeRange tests
-test("parseDateTimeRange", () => {
-    
+test("parseDateTimeRange: date range", () => {
+    const input = "April 12 2021 to April 20 2021";
+    const expectedBegin = new Date("April 12 2021");
+    const expectedEnd = new Date("April 20 2021");
+    parser.parseDateTimeRange(input);
+    expect(parser.getEventBegin().toDateString()).toBe(expectedBegin.toDateString());
+    expect(parser.getEventEnd().toDateString()).toBe(expectedEnd.toDateString());
 })
