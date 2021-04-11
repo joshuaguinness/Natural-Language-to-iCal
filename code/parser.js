@@ -295,7 +295,8 @@ function onLoad() {
 	liveUpdate();
 	
 	// Preview only if "&p" argument is also present, otherwise download
-	generateICS((previewOnly != null) ? 0 : 1); 
+	if (inputString)
+	generateICS((previewOnly != null) ? 0 : 1);
 }
 
 // Temporary: for automated testing during development
