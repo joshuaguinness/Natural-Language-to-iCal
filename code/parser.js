@@ -11,7 +11,7 @@ var allDay // Track whether event is an all-day event (no time specified)
 // Patterns to match from user's input
 var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b"
 var relativeDate = "\\b(tom(?:orrow)?|tmrw|today|next|this)\\b"
-var dateTimeRange = "\\b( - )|( to )|( and )\\b"
+var dateTimeRange = "\\b((-)|(to)|(and))\\b" //no spaces needed b/c \\b
 
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
 function liveUpdate() {
@@ -44,7 +44,7 @@ function splitAtPeriod(input) {
 // Split the summary and date
 // DateTime -> (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime | (' from ' | ' between ') DateTimeRange
 function splitSummaryDate(input){
-
+	
 	// A separator can be found for Summary and DateTime
 	var summaryDateSeparator = false;
 	var splitted;
@@ -55,35 +55,35 @@ function splitSummaryDate(input){
 		splitted = input.split(' on ')
 		if (input.match(relativeDate)){
 			parseRelativeDateTime(splitted[1])
-		} else {
+			} else {
 			eventBegin = parseAbsoluteDateTime(splitted[1])
 			eventEnd = parseAbsoluteDateTime(splitted[1])
 			// If not all day event, then set end time 1 hr after start time
 			allDay === 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null;
 		}
-	} else if (input.search(' by ') >= 0){
+		} else if (input.search(' by ') >= 0){
 		summaryDateSeparator = true;
 		splitted = input.split(' by ')
 		if (input.match(relativeDate)){
 			parseRelativeDateTime(splitted[1])
-		} else {
+			} else {
 			eventBegin = parseAbsoluteDateTime(splitted[1])
 			eventEnd = parseAbsoluteDateTime(splitted[1])
 			allDay === 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null;
 		}
 	}
-
+	
 	// ('from' | 'between') DateTimeRange
 	if (input.search(' from ') >= 0 ) {
 		summaryDateSeparator = true;
 		splitted = input.split(' from ');
 		parseDateTimeRange(splitted[1]);
-	} else if (input.search(' between') >= 0) {
+		} else if (input.search(' between') >= 0) {
 		summaryDateSeparator = true;
 		splitted = input.split(' between ');
 		parseDateTimeRange(splitted[1]);
 	}
-
+	
 	console.log(eventBegin)
 	console.log(eventEnd)
 	
@@ -94,7 +94,7 @@ function splitSummaryDate(input){
 		eventEnd = "No date or time";
 		return
 	}
-
+	
 	eventSummary = splitted[0]
 	
 	// Store notices if certain fields are missing from input
@@ -112,43 +112,98 @@ function parseAbsoluteDateTime(input){
 	if (!input || input == " ")
 	return error("Could not find a date value (Error D1)")
 	
-	// const referenceDate = new Date(); // Reference Date
+	
+	const referenceDate = new Date(); // Reference Date
 	var date = new Date(); // Date Time to modify
-
+	
 	var splitted = input.split(' at ');
 	if (splitted.length === 1){
 		allDay = 1
-	} else {
+		} else {
 		allDay = 0
 	}
 	
-	// Try to initially create a Date Time object using constructor
-	var dateAttempt = new Date(splitted[0])
-	if (dateAttempt != 'Invalid Date'){
-		// Add time
-		allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
-		return date
-	} else {
-		return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
+	
+	// Check useragent to see if Firefox/Chromium due to differences between browsers in date() implementation. Unfortuantely unavoidable.
+	if (navigator.userAgent.indexOf("Firefox") != -1 ) {
+		// Try to initially create a Date Time object using input as-is
+		var dateAttempt = new Date(input);
+		if (dateAttempt != 'Invalid Date') {
+			// Add time
+			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
+			return date
+		}
+		
+		// If fail, add current year and retry (in case user entered MM/DD)
+		dateAttempt = new Date(input + " " + referenceDate.getFullYear());
+		if (dateAttempt != 'Invalid Date') {
+			// If successful, check to see if the date has already passed this year, and if so, change year to next year
+			if (dateAttempt < referenceDate)
+			dateAttempt.setFullYear(referenceDate.getFullYear() + 1);
+			
+			
+			// Add time
+			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
+			return date
+		}
 	}
-
-	// If fail, add year and retry
-	// dateAttempt = new Date(input + " " + referenceDate.getFullYear());
-	// if (dateAttempt != 'Invalid Date') {
-	// 	// If successful, check to see if the date has already passed this year, and if so, change year to next year
-	// 	if ((dateAttempt < referenceDate) && (dateAttempt.getFullYear() == referenceDate.getFullYear()))
-	// 	dateAttempt.setFullYear(dateAttempt.getFullYear() + 1);
-	// 	return dateAttempt;
-	// }
-
+	else if(navigator.userAgent.indexOf("Chrome") != -1) { // Chromium/Webkit
+		// Try to initially create a Date Time object using input as-is
+		var dateAttempt = new Date(input);
+		
+		if (dateAttempt != 'Invalid Date') {
+			if (dateAttempt < referenceDate) {
+				dateAttempt.setFullYear(referenceDate.getFullYear());
+				if (dateAttempt != 'Invalid Date')
+				if (dateAttempt < referenceDate)
+				dateAttempt.setFullYear(referenceDate.getFullYear() + 1);
+				
+				
+			}
+			// Add time
+			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
+			return date
+		}
+	}
+	else { // For other browsers incl Safari
+		// Try to initially create a Date Time object using input as-is
+		var dateAttempt = new Date(input);
+		
+		if (dateAttempt != 'Invalid Date') {
+			if (dateAttempt < referenceDate) {
+				dateAttempt = new Date(input + " " + referenceDate.getFullYear());
+				if (dateAttempt != 'Invalid Date')
+				if (dateAttempt < referenceDate)
+				dateAttempt.setFullYear(referenceDate.getFullYear() + 1);
+				
+				
+			}
+			// Add time
+			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
+			return date
+		}
+		else
+		// If fail, add current year and retry (in case user entered MM/DD)
+		dateAttempt = new Date(input + " " + referenceDate.getFullYear());
+		if (dateAttempt != 'Invalid Date') {
+			// If successful, check to see if the date has already passed this year, and if so, change year to next year
+			if (dateAttempt < referenceDate)
+			dateAttempt.setFullYear(referenceDate.getFullYear() + 1);
+			
+			// Add time
+			allDay === 0 ? date = timeDecision(dateAttempt, splitted[1]) : date = dateAttempt
+			return date
+		}
+	}
+	
 	// If no good, try to parse it as a relative date
-	// dayMatchArray = input.toLowerCase().match(regExDayofWeek);	
-	// if (dayMatchArray)
-	// return setDateByDayOfWeek(date, dayMatchArray, referenceDate);
-	// else
-	// return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
-
+	dayMatchArray = input.toLowerCase().match(regExDayofWeek);	
+	if (dayMatchArray)
+	return setDateByDayOfWeek(date, dayMatchArray, referenceDate);
+	else
+	return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
 }
+
 
 // Recognizes relative date strings from input and creates date object
 // RelativeDateTime -> RelativeDate [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]
@@ -180,13 +235,13 @@ function parseRelativeDateTime(input){
 		date = setDateByDayOfWeek(date, dayMatchArray, referenceDate);
 		date.setDate(date.getDate() + 7);
 	}
-
+	
 	// [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]
 	var splitted;
 	if (input.search('at') >= 0){
 		splitted = input.split(' at ')
 		date = timeDecision(date, splitted[1])
-	} else if (input.search('in the') >= 0){
+		} else if (input.search('in the') >= 0){
 		splitted = input.split(' in the ')
 		console.log(splitted[1])
 		date = timeDecision(date, splitted[1])
@@ -197,7 +252,7 @@ function parseRelativeDateTime(input){
 	return;
 }
 
-// DateTimeRange -> AbsoluteDateTime (' - ' | ' to ' | ' and ') AbsoluteDateTime
+// DateTimeRange -> AbsoluteDateTime ('-' | ' to ' | ' and ') AbsoluteDateTime
 function parseDateTimeRange(input){
 	
 	// Match the regex and split on that match
@@ -251,36 +306,36 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 
 // Sets the time depending on input
 function timeDecision(date, input) {
-
+	
 	allDay = 0;
-
+	
 	// AbsoluteTime -> MonthNumber ('am'| 'pm')
 	if (input.search('am') >= 0){
 		var splitted = input.split(' am');
 		console.log(splitted);
 		date.setHours(parseInt(splitted[0]), 0, 0);
 		return date;
-	} else if (input.search('pm') >= 0){
+		} else if (input.search('pm') >= 0){
 		var splitted = input.split(' pm');
 		date.setHours(parseInt(splitted[0]) + 12, 0, 0);
 		return date;
 	}
-
+	
 	// RelativeTime -> Morning | Afternoon | Evening | Night
 	if (input.toLowerCase().search('morning') >= 0){
 		date.setHours(9, 0, 0);
 		return date;
-	} else if (input.toLowerCase().search('afternoon') >= 0){
+		} else if (input.toLowerCase().search('afternoon') >= 0){
 		date.setHours(13, 0, 0);
 		return date;
-	} else if (input.toLowerCase().search('evening') >= 0){
+		} else if (input.toLowerCase().search('evening') >= 0){
 		date.setHours(17, 0, 0);
 		return date;
-	} else if (input.toLowerCase().search('night') >= 0){
+		} else if (input.toLowerCase().search('night') >= 0){
 		date.setHours(21, 0, 0)
 		return date;
 	}
-
+	
 	return "Error in Time"
 }
 
@@ -290,9 +345,11 @@ function generateICS(arg) {
 	// Rerun converter to refresh variables then build the iCalendar file using ics.js library and parsed data. 
 	liveUpdate();
 	
-	// If all-day event, set end date to be midnight of the day after the user's entered end day (per iCal spec).
+	// If all-day event, set end date to be midnight of the day after the user's entered end day (per iCal spec). Try catch since var can contain non-date value
+	// Don't remove try catch or else typeerror when eventEnd contains error str rather than date obj
 	if (allDay)
-	eventEnd.setDate(eventEnd.getDate() + 1);
+	try {eventEnd.setDate(eventEnd.getDate() + 1);}
+	catch {}
 	
 	// If no description, use empty string for file rather than "No description"
 	icalOutput = ics();
@@ -321,11 +378,29 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 	}
 	
 	// Return the parsed data in a user-friendly way for real-time display on page
-	return '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
-	'</span></li><li id="output-date-start">Date Start: <span class="output">' + formatDate(eventBegin) +
-	'</span></li><li id="output-date-end">Date End: <span class="output">' + formatDate(eventEnd) + 
-	'</span></li><li id="output-desc">Description: <span class="output">' + eventDescription + 
+	var output = '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
+	'</span></li>';	
+	
+	if (formatDate(eventBegin) == formatDate(eventEnd)) //If start and end times are identical, just show one date field
+	output = output + '<li id="output-date-single">Event Date: <span class="output">' + formatDate(eventBegin) +
 	'</span></li>';
+	else
+	output = output + '<li id="output-date-start">Date Start: <span class="output">' + formatDate(eventBegin) +
+	'</span></li>';
+	
+	if (formatDate(eventBegin) != formatDate(eventEnd))	
+	if (eventEnd != "No date or time")
+	output = output + '<li id="output-date-end">Date End: <span class="output">' + formatDate(eventEnd) + 
+	'</span></li>';	
+	
+	if (eventDescription != "No description")
+	output = output + '<li id="output-desc">Description: <span class="output">' + eventDescription + 
+	'</span></li>';
+	else
+	output = output + '<li id="output-desc">Description: ' + eventDescription + 
+	'</li>';
+	
+	return output
 }
 
 
