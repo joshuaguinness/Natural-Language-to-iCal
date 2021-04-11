@@ -52,7 +52,7 @@ test("parseAbsoluteDateTime: relative date & time", () => {
     const input = "1055PM Thursday";
     let event = parser.parseAbsoluteDateTime(input);
     let expected = parser.setDateByDayOfWeek(new Date(), ["thurs", "thursday"], new Date())
-    expected.setHours(11, 55);
+    expected.setHours(10, 55, 0);
     expect(event.toDateString()).toBe(expected.toDateString())
     // expect(event.getTime()).toBe(expected.getTime());
 })
