@@ -3,11 +3,11 @@
 ```
 S -> Summary DateTime ["." Description]
 Summary -> [ Word ]+
-DateTime -> AbsoluteDateTime | RelativeDateTime | DateTimeRange
-AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) (AbsoluteTime | RelativeTime)
-RelativeDateTime -> [' at ' | ' on ' | ' by '] RelativeDate ('at' | 'in the') (AbsoluteTime | RelativeTime)
-DateTimeRange -> ['from' | 'between'] (AbsoluteDateTime | RelativeDateTime) (' - ' | ' to ' | ' and ') (AbsoluteDateTime | RelativeDateTime)
-RelativeDate -> 'tomorrow' | 'today' | [('this' | 'next')  DayOfWeek]
+DateTime -> (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime | (' from ' | ' between ') DateTimeRange
+AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) 'at' (AbsoluteTime | RelativeTime)
+RelativeDateTime -> RelativeDate (' at ' | ' in the ') (AbsoluteTime | RelativeTime)
+DateTimeRange -> AbsoluteDateTime (' - ' | ' to ' | ' and ') AbsoluteDateTime
+RelativeDate -> 'tomorrow' | 'today' | (('this' | 'next')  DayOfWeek)
 DayOfWeek -> 'Mon' ['day'] | ... | 'Sun' ['day']
 DayOfMonth -> 1 | ... | 31
 MonthNumber -> 1 | ... | 12
@@ -19,4 +19,6 @@ Description -> [ Word ]*
 Word -> [a-zA-Z0-9]+ | '!' | '?' | ' ' | '-' | '_' | ...
 ```
 
-(TODO: Word strings must not include reserved words like 'tomorrow'?)
+TODO: 
+- Word strings must not include reserved words like 'tomorrow'?
+- Add RelativeDateTime to DateTimeRange
