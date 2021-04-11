@@ -13,6 +13,20 @@ var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur
 var relativeDate = "\\b(tom(?:orrow)?|tmrw|today|next|this)\\b"
 var dateTimeRange = "\\b((-)|(to)|(and))\\b" //no spaces needed b/c \\b
 
+// Function to enter some sample text for manual testing/demo
+function sampleInput(testNum) {	
+	var testStrings = ['Complete project by Mon, Apr 12. Submit everything on Gitlab',
+		'Project presentations from April 3 to April 6. Prepare slides',
+		'Submit lab on next tuesday at 10 am. Worth 10 marks',
+		'This is an invalid input because there is no date or time.',
+		'This is also invalid from  to frday. Due to bad date values',
+	'This is no good either between 1/31-1/30. Because of the invalid date range']
+	
+	document.getElementById('userInput').value = testStrings[testNum - 1]
+	liveUpdate()
+	return;
+}
+
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
 function liveUpdate() {
 	// Get user's input from textbox and initialize global variables
@@ -48,26 +62,31 @@ function splitSummaryDate(input){
 	var summaryDateSeparator = false;
 	var splitted;
 	
-	//TODO FAILS IF KEYWORD IS IN UPPER CASE 2021.04.11
+	// Don't match upper case separators since they can be abbrev/initials (ie "Complete project for McMaster University in Hamilton, ON by Monday")
 	
 	// (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime
-	if (input.toLowerCase().search(' on ') >= 0){
+	if (input.search(' on ') >= 0){
 		summaryDateSeparator = true;
 		splitted = input.split(' on ')
 		if (input.toLowerCase().match(relativeDate)){
 			parseRelativeDateTime(splitted[1])
-			} else {
+		} 
+		else {
 			eventBegin = parseAbsoluteDateTime(splitted[1])
 			eventEnd = parseAbsoluteDateTime(splitted[1])
 			// If not all day event, then set end time 1 hr after start time
-			allDay === 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null;
+			if (allDay === 0)
+			try { eventEnd.setHours(eventEnd.getHours() + 1) }
+			catch { eventSummary = splitted[0]; return }
 		}
-		} else if (input.toLowerCase().search(' by ') >= 0){
+	} 
+	else if (input.search(' by ') >= 0){
 		summaryDateSeparator = true;
 		splitted = input.split(' by ')
 		if (input.toLowerCase().match(relativeDate)){
 			parseRelativeDateTime(splitted[1])
-			} else {
+		} 
+		else {
 			eventBegin = parseAbsoluteDateTime(splitted[1])
 			eventEnd = parseAbsoluteDateTime(splitted[1])
 			allDay === 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null;
@@ -79,12 +98,13 @@ function splitSummaryDate(input){
 		summaryDateSeparator = true;
 		splitted = input.split(' from ');		
 		try {parseDateTimeRange(splitted[1]);}
-		catch {eventEnd = error("Could not find date range separator (Error S2)"); return}		
-		} else if (input.search(' between') >= 0) {
+		catch {eventEnd = error("Could not find date range separator (Error S2)")}
+	}
+	else if (input.search(' between') >= 0) {
 		summaryDateSeparator = true;
 		splitted = input.split(' between ');
 		try {parseDateTimeRange(splitted[1]);}
-		catch {eventEnd = error("Could not find date range separator (Error S2)"); return}	
+		catch {eventEnd = error("Could not find date range separator (Error S2)")}
 	}
 	
 	console.log(eventBegin)
@@ -97,16 +117,16 @@ function splitSummaryDate(input){
 		eventEnd = "No date or time";
 		return
 	}
-	
-	eventSummary = splitted[0]
-	
-	// Store notices if certain fields are missing from input
-	if (!eventSummary)
-	eventSummary = "Untitled Event"	
-	if (!eventBegin)
-	eventBegin = "No date or time"
-	if (!eventEnd)
-	eventEnd = "No date or time"
+
+eventSummary = splitted[0]
+
+// Store notices if certain fields are missing from input
+if (!eventSummary)
+eventSummary = "Untitled Event"	
+if (!eventBegin)
+eventBegin = "No date or time"
+if (!eventEnd)
+eventEnd = "No date or time"
 }
 
 // AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]
@@ -151,7 +171,7 @@ function parseAbsoluteDateTime(input){
 			if (dayMatchArray)
 			date = setDateByDayOfWeek(splitted[0], dayMatchArray, referenceDate);
 			else
-			date = error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
+			return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
 		}
 	}
 	
@@ -180,13 +200,13 @@ function parseRelativeDateTime(input){
 	else if (input.match('\\b(this)\\b')){
 		dayMatchArray = input.match(regExDayofWeek)
 		console.log(dayMatchArray);
-		try {date = setDateByDayOfWeek(date, dayMatchArray[0], referenceDate);}
+		try {date = setDateByDayOfWeek(date, dayMatchArray, referenceDate);}
 		catch {eventBegin = error("Could not parse <i>" + input + "</i> as a relative date (Error D3)"); return}
 	} 
 	else if (input.match('\\b(next)\\b')){
 		dayMatchArray = input.match(regExDayofWeek)
 		console.log(dayMatchArray);
-		try {date = setDateByDayOfWeek(date, dayMatchArray[0], referenceDate);}
+		try {date = setDateByDayOfWeek(date, dayMatchArray, referenceDate);}
 		catch {eventBegin = error("Could not parse <i>" + input + "</i> as a relative date (Error D3)"); return}
 		date.setDate(date.getDate() + 7);
 	}
@@ -228,9 +248,8 @@ function parseDateTimeRange(input){
 }
 
 function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
+	dayOfWeek = dayMatchArray[0].toLowerCase();	
 	var date = new Date(); // Date Time to modify
-	
-	dayOfWeek = dayMatchArray;
 	
 	// Match day of week from input w/ regex
 	// DayOfWeek -> 'Mon' ['day'] | ... | 'Sun' ['day']
@@ -269,7 +288,8 @@ function timeDecision(date, input) {
 	if (input.search('am') >= 0){
 		var splitted = input.split(' am');
 		console.log(splitted);
-		date.setHours(parseInt(splitted[0]), 0, 0);
+		try {date.setHours(parseInt(splitted[0]), 0, 0);}
+		catch {return "Could not parse date with time"}
 		return date;
 		} else if (input.search('pm') >= 0){
 		var splitted = input.split(' pm');
@@ -292,7 +312,8 @@ function timeDecision(date, input) {
 		return date;
 	}
 	
-	return "Error in Time"
+	// Error if time parsing failed (For inputs like "Something on tuesday at 11:30 fm")
+	return error("Could not parse <i>" + input + " as time </i>") 
 }
 
 
@@ -301,8 +322,7 @@ function generateICS(arg) {
 	// Rerun converter to refresh variables then build the iCalendar file using ics.js library and parsed data. 
 	liveUpdate();
 	
-	// If all-day event, set end date to be midnight of the day after the user's entered end day (per iCal spec). Try catch since var can contain non-date value
-	// Don't remove try catch or else typeerror when eventEnd contains error str rather than date obj
+	// If all-day event, set end date to be midnight of the day after the user's entered end day (per iCal spec). Try catch since var can contain error strings
 	if (allDay)
 	try {eventEnd.setDate(eventEnd.getDate() + 1);}
 	catch {}
