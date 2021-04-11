@@ -48,6 +48,15 @@ test("parseAbsoluteDateTime: date written format", () => {
     // expect(event.getFullYear()).toBe(expectedYear);
 })
 
+test("parseAbsoluteDateTime: relative date & time", () => {
+    const input = "1055PM Thursday";
+    let event = parser.parseAbsoluteDateTime(input);
+    let expected = parser.setDateByDayOfWeek(new Date(), ["thurs", "thursday"], new Date())
+    expected.setHours(11, 55);
+    expect(event.toDateString()).toBe(expected.toDateString())
+    // expect(event.getTime()).toBe(expected.getTime());
+})
+
 test("parseAbsoluteDateTime: test error handling", () => {
     const input = "test";
     let event = parser.parseAbsoluteDateTime(input);
