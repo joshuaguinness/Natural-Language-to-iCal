@@ -109,3 +109,10 @@ test("parseDateTimeRange: date range without year", () => {
     expect(parser.getEventBegin().toDateString()).toBe(expectedBegin.toDateString());
     expect(parser.getEventEnd().toDateString()).toBe(expectedEnd.toDateString());
 })
+
+test("parseDateTimeRange: end date before start date", () => {
+    const input = "April 20 to April 12";
+    const expected = "<span class=\"output-error\"><i>Monday, April 12, 2021</i> precedes start date (Error D3)</span>";
+    parser.parseDateTimeRange(input);
+    expect(parser.getEventEnd()).toBe(expected);
+})
