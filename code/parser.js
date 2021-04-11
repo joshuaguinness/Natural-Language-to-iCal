@@ -222,9 +222,9 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 function generateICS(arg) {		
 	// Build the iCalendar file using ics.js library and parsed data. 
 	
-	// If multi-day all-day event, set end date to be midnight of the day after the user's entered end day (per iCal spec).
-	// if (allDay)
-	// eventEnd.setDate(eventEnd.getDate() + 1);
+	// If all-day event, set end date to be midnight of the day after the user's entered end day (per iCal spec).
+	if (allDay)
+	eventEnd.setDate(eventEnd.getDate() + 1);
 	
 	// If no description, use empty string for file rather than "No description"
 	icalOutput = ics();
@@ -316,4 +316,5 @@ module.exports = {
 	parseDateTimeRange, 
 	parseAbsoluteDateTime, 
 	setDateByDayOfWeek, 
-}	
+	generateICS
+}
