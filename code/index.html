@@ -1,6 +1,6 @@
-<!-- Demo website for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter -->
-<!-- See parser.js for main converter program code. The resources directory contains supporting files/framework/libraries -->
-<!-- This page makes use of the following open source libraries and frameworks: ics.js, pure.io -->
+<!-- Demo website for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter. Open in web browser to use. -->
+<!-- See parser.js for main converter program code. The resources directory contains supporting files/framework/libraries. -->
+<!-- This page makes use of the following open source libraries and frameworks: ics.js, pure.io. -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +8,8 @@
 		<title>Natural Language to iCalendar Converter</title>
 		<meta name="Description" content="COMP SCI 4TB3 Project"/>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">		
+		
 		<link type="image/x-icon" rel="shortcut icon" href="resources/favicon.png"/>
 		<link rel="stylesheet" href="resources/style.css"/>
 		<script type="text/javascript" src="resources/ics.js"></script>
@@ -25,7 +26,9 @@
 	<body onload="onLoad()">
 		<div class="header">
 			<div class="home-menu">
-				<h1 class="content-head content-head-ribbon"><center>Natural Language to iCalendar Converter</center></h1>
+				<h1 class="content-head content-head-ribbon">
+					<center>Natural Language to iCalendar Converter</center>
+				</h1>
 			</div>
 		</div>
 		
@@ -34,19 +37,24 @@
 				<img width="300" class="pure-img-responsive" src="resources/logo.png">
 			</div>
 			<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-6-8">
+				<!-- Main user interaction area w/ input textbox and controls --> 
 				<h2 class="content-head content-head-ribbon">COMP SCI 4TB3 Project Demo</h2>
 				<p>	Type your event information to view a real-time conversion, or try one of the samples. </p>
 				
 				<form class="pure-form">
 					<input type="text" id="userInput" class="pure-form pure-input-rounded" placeholder="Enter something!" size="50" oninput="liveUpdate()" autofocus onkeydown = "if (event.keyCode == 13) { generateICS(1); event.preventDefault();}">
+					
+					<!-- Temporary: Selection of valid and invalid sample inputs for development & testing --> 
 					Sample Inputs: 
-					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'CS 4TB3 Midterm 2 on 4/6/21. On Teams. Review notes.'; liveUpdate()">1</button>
-					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Complete project by Mon, Apr 12. Submit everything on Gitlab'; liveUpdate()">2</button>
+					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Complete project by Mon, Apr 12. Submit everything on Gitlab'; liveUpdate()">1</button>
+					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Project presentations on Thurs to Friday. Prepare slides'; liveUpdate()">2</button>
 					<button type="button" class="pure-button pure-button-blue" onclick="document.getElementById('userInput').value = 'Submit lab on Jhub at 1055PM Thursday'; liveUpdate()">3</button>
 					<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is an invalid input because there is no date or time.'; liveUpdate()">4</button>
-					<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is an invalid input on tuesday to frday. because of a typo'; liveUpdate()">5</button>
+					<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is also invalid on  to frday. Due to bad date values'; liveUpdate()">5</button>
+					<button type="button" class="pure-button pure-button-orange" onclick="document.getElementById('userInput').value = 'This is no good either at 1/31-1/30. Because of the invalid date range'; liveUpdate()">6</button>
 				</form>
 				
+				<!-- Live Update output section hidden by default and when input is blank --> 
 				<div id="output" hidden>			
 					<ul id="liveOutput">
 					</ul>
@@ -57,13 +65,14 @@
 			</div>
 		</div>
 		
-		<div class="content">	
+		<div class="content">
+			<!-- Rest of page contains general project info and links to Gitlab --> 
 			<h2 class="content-head is-center">About the Project</h2>	
 			<div class="pure-g">
 				<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
 					<p>	This webpage demonstrates our group's project, which converts a user’s schedule information from a natural language input to an output in the standard <a href = "https://en.wikipedia.org/wiki/iCalendar">iCalendar</a> (.ics) format. </p>
 					<p>	Users can easily create new calendar events using only their keyboard, providing information such as the event's name, date, and time together as part of one input string. </p>
-					<p>	The system parses the input and displays recognized fields in real time. Pressing Enter once the required information has been provided generates an .ics event file, which can be added to most calendar applications and services. </p>
+					<p>	The system parses the input and displays recognized fields in real time. Pressing Enter once the required information has been provided generates an .ics event file supported by most calendar applications. </p>
 				</div>
 				
 				<div class="l-box-lrg pure-u-1 pure-u-md-1-2">
@@ -73,8 +82,7 @@
 					<br/><br/>
 					
 					<h4>More Information</h4>
-					<p> For additional information on our project, please refer to the proposal and accompanying documentation. </p>
-					<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/blob/master/documentation/project-proposal.md">View Proposal</a>
+					<p> For additional information, please refer to our project proposal and accompanying documentation on GitLab. </p>
 					<a class="pure-button pure-button-gray" href="https://gitlab.cas.mcmaster.ca/cs4tb3-winter21/group-9/-/tree/master/documentation">View Documentation</a>
 				</div>
 			</div>
