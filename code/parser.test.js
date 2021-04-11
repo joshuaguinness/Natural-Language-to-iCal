@@ -39,6 +39,15 @@ test("parseAbsoluteDateTime: date slash format", () => {
     expect(event.toDateString()).toBe(expected)
 })
 
+test("parseAbsoluteDateTime: date written format", () => {
+    const input = "Apr 12";
+    let event = parser.parseAbsoluteDateTime(input);
+    const expectedYear = new Date().getFullYear();
+    expect(event.getMonth()).toBe(3);
+    expect(event.getDate()).toBe(12);
+    // expect(event.getFullYear()).toBe(expectedYear);
+})
+
 test("parseAbsoluteDateTime: test error handling", () => {
     const input = "test";
     let event = parser.parseAbsoluteDateTime(input);
