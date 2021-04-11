@@ -2,7 +2,6 @@ const parser = require("./parser");
 
 // TODO: Create tests for regex
 // TODO: Create tests for end date before start date
-// TODO: Test parseDateTimeRange
 // TODO: Test parseRelativeDateTime
 // TODO: Test parseDateTime
 // TODO: Test splitSummaryDate
@@ -12,13 +11,13 @@ const parser = require("./parser");
 test("setDateByDayOfWeek: set event to day of the week ", () => {
     const referenceDate = new Date("April 12, 2021 09:00:00"); // Monday
     const dayMatchArray = [
-        ["tues", "tuesday"], 
-        ["wed", "wednesday"],                    
-        ["thurs", "thursday"], 
-        ["fri", "friday"], 
-        ["sat", "saturday"],                    
-        ["sun", "sunday"],
-        ["mon", "monday"] 
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday", 
+        "saturday",
+        "sunday",
+        "monday"
     ];
     for (let i = 0; i < dayMatchArray.length; i++) {
         let date = new Date("April 12, 2021 09:00:00");
@@ -29,7 +28,7 @@ test("setDateByDayOfWeek: set event to day of the week ", () => {
 
 test("setDateByDayOfWeek: test error handling", () => {
     const referenceDate = new Date("April 12, 2021 09:00:00");
-    const dayMatchArray = ["test", "test"];
+    const dayMatchArray = "test";
     let date = new Date("April 12, 2021 09:00:00");
     let event = parser.setDateByDayOfWeek(date, dayMatchArray, referenceDate);
     const expected = "<span class=\"output-error\">Could not parse <i>test</i> as a relative date (Error D3)</span>";
