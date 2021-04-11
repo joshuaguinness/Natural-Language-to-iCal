@@ -117,15 +117,27 @@ test("parseDateTimeRange: end date before start date", () => {
 })
 
 // parseRelativeDateTime tests
+test("parseRelativeDateTime: relative date \"tomorrow\"", () => {
+    const input = "tomorrow at 10 AM";
+    let expected = new Date();
+    expected.setDate(expected.getDate() + 1);
+    expected.setHours(10, 0, 0);
+
+    parser.parseRelativeDateTime(input);
+    expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
+    expect(parser.getEventBegin().getTime()).toBe(expected.getTime());
+})
+
 test("parseRelativeDateTime: relative date \"next\"", () => {
     const input = "next tuesday at 10 AM";
-    parser.parseRelativeDateTime(input);
     const referenceDate = new Date();
     const dayMatch = ["tues", "tuesday"];
     const date = new Date();
     let expected = parser.setDateByDayOfWeek(date, dayMatch, referenceDate);
     expected.setDate(expected.getDate() + 7);
     expected.setHours(10, 0, 0);
+
+    parser.parseRelativeDateTime(input);
     expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
     expect(parser.getEventBegin().getTime()).toBe(expected.getTime());
 })
