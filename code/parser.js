@@ -62,10 +62,10 @@ function splitSummaryDate(input){
 	var summaryDateSeparator = false;
 	var splitted;
 	
-	//TODO FAILS IF KEYWORD IS IN UPPER CASE 2021.04.11
+	// Don't match upper case separators since they can be abbrev/initials (ie "Complete project for McMaster University in Hamilton, ON by Monday")
 	
 	// (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime
-	if (input.toLowerCase().search(' on ') >= 0){
+	if (input.search(' on ') >= 0){
 		summaryDateSeparator = true;
 		splitted = input.split(' on ')
 		if (input.toLowerCase().match(relativeDate)){
@@ -80,7 +80,7 @@ function splitSummaryDate(input){
 			catch { eventSummary = splitted[0]; return }
 		}
 	} 
-	else if (input.toLowerCase().search(' by ') >= 0){
+	else if (input.search(' by ') >= 0){
 		summaryDateSeparator = true;
 		splitted = input.split(' by ')
 		if (input.toLowerCase().match(relativeDate)){
