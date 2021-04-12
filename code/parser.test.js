@@ -31,7 +31,7 @@ test("setDateByDayOfWeek: test error handling", () => {
     const dayMatchArray = ["test", "test"];
     let date = new Date("April 12, 2021 09:00:00");
     let event = parser.setDateByDayOfWeek(date, dayMatchArray, referenceDate);
-    const expected = "<span class=\"output-error\">Could not parse <i>test</i> as a relative date (Error D3)</span>";
+    const expected = "<span class=\"output-error\">Could not parse <i>test</i> as a relative date (Error D5)</span>";
     expect(event).toBe(expected);
 })
 
