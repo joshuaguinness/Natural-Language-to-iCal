@@ -13,19 +13,50 @@ var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur
 var relativeDate = "\\b(tom(?:orrow)?|tmrw|today|next|this)\\b";
 var dateTimeRange = "\\b((-)|(to)|(and))\\b"; //no spaces needed b/c \\b
 
+
 // Function to enter some sample text for manual testing/demo
+var i = 0;
+var txt;
+var speed = 10;
+
 function sampleInput(testNum) {	
 	var testStrings = ['Complete project by Wed Apr 14 at 9:30 pm. Submit everything on Gitlab',
 		'Project presentations from April 3 to April 6. Prepare slides',
-		'Group meeting on next tuesday at 11:15 am',
+		'Group meeting on next tues at 11:15 am',
 		'This is an invalid input because there is no date or time.',
 		'This is also invalid from Appr 27 8:23 pm to mon at 2a2:03 pm. Due to bad date values',
 	'This is no good either between 1/31-12/30. Because of the invalid date range'];
 	
-	document.getElementById('userInput').value = testStrings[testNum - 1];
-	liveUpdate();
+	i = 0;
+	document.getElementById("userInput").value = "";
+	txt = testStrings[testNum - 1];
+	typeWriter();
 	return;
 }
+function typeWriter() {
+	if (i < txt.length) {
+		document.getElementById("userInput").value += txt.charAt(i);
+		i++;
+		setTimeout(typeWriter, speed);
+		liveUpdate();
+	}
+}
+
+
+// Function to enter some sample text for manual testing/demo
+// function sampleInput(testNum) {	
+	// var testStrings = ['Complete project by Wed Apr 14 at 9:30 pm. Submit everything on Gitlab',
+		// 'Project presentations from April 3 to April 6. Prepare slides',
+		// 'Group meeting on next tuesday at 11:15 am',
+		// 'This is an invalid input because there is no date or time.',
+		// 'This is also invalid from Appr 27 8:23 pm to mon at 2a2:03 pm. Due to bad date values',
+	// 'This is no good either between 1/31-12/30. Because of the invalid date range'];
+	
+	// document.getElementById('userInput').value = testStrings[testNum - 1];
+	// liveUpdate();
+	// return;
+// }
+
 
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
 function liveUpdate() {
@@ -129,9 +160,9 @@ function splitSummaryDate(input) {
 	if (!eventEnd)
 	eventEnd = "No date or time";
 	if (eventBegin.toString().search('Invalid Date') >= 0 )
-		eventBegin = error("Could not parse date-time value (Error T5)");
+	eventBegin = error("Could not parse date-time value (Error T5)");
 	if (eventEnd.toString().search('Invalid Date') >= 0 )
-		eventEnd = error("Could not parse date-time value (Error T5)");
+	eventEnd = error("Could not parse date-time value (Error T5)");
 }
 
 // AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]
