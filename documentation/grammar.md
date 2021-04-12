@@ -22,3 +22,6 @@ Word -> [a-zA-Z0-9]+ | '!' | '?' | ' ' | '-' | '_' | ...
 TODO: 
 - Word strings must not include reserved words like 'tomorrow'?
 - Add RelativeDateTime to DateTimeRange
+- Add productions for Morning, Afternoon, Evening, and Night
+- Update timing productions based on recent additions to the code
+- Add smaller productions to docmentation
