@@ -6,31 +6,82 @@
 **Description:** (summary of what function does)\
 **Details:** (Optional detailed description of how function works)
 
-_Example_:\
-**splitInput** \
-**Input(s):** input: string, string to parse \
-**Output:** string, parsed string \
-**Description:** Function to split up input string into parts by matching keywords/patterns between fields
-
 ## parser.js
 
-**liveUpdate** \
-**Parameters:** None \
-**Returns:** None \
-**Description:** Updates the currently recognized fields on the front-end. \
-**Associated Production(s):** None \
+### **Functions associated with the grammar**
 
-**splitAtPeriod** \
+#### splitAtPeriod
 **Input:** input : string, string to be split \
 **Output:** None \
 **Description:** Splits the inputted string at all occurrences of ". ". Based on the specified grammar structure, anything before ". " is the date and summary of the event and following ". " is the description of the event. The grammar only supports one instance of ". ". The description is updated in the global variable, while the date and summary are passed to splitSummaryDate(). \
 **Associated Production(s):** `S -> Summary Date ". " Description`
 
-**splitSummaryDate** \
+#### splitSummaryDate
 **Input:** input : string, string to be split \
 **Output:** None \
 **Description:** Splits the summary and date to be processed separately. Summary is updated in the global variable while date is further parsed to determine whether the date is an absolute date, relative date, or date range. The date is passed to the associated functions for further parsing. Inludes error handling for no summary-date separators and no summary or date. \
 **Associated Production(s):** `DateTime -> (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime | (' from ' | ' between ') DateTimeRange`
 
-**parseAbsoluteDateTime** \
-**Input:** input : string, date to parse
+#### parseAbsoluteDateTime
+**Input:** input : string, date to parse \
+**Output:** date: Date, to be displayed \
+**Description:** Creates a Date object using the input into the function and returns that Date object. Has error handling and additional code for constructing the date from user input should the user provide incorrect input. \
+**Associated Production(s):** `AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]`
+
+#### parseRelativeDateTime
+**Input:** input : string, date to parse \
+**Output:** None \
+**Description:** Recognizes relative date strings from input and creates date object. eventBegin and eventEnd global variables are updated the date. \
+**Associated Production(s):** `RelativeDateTime -> RelativeDate [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]`
+
+#### parseDateTimeRange
+**Input:** input : string, date to parse \
+**Output:** None \
+**Description:** Parses a date-time range by splitting it into two parts and passing each half to `parseAbsoluteDateTime`. Checks to ensure that eventEnd does not occure before eventBegin. Updates the global variables as well. \
+**Associated Production(s):** `DateTimeRange -> AbsoluteDateTime ('-' | ' to ' | ' and ') AbsoluteDateTime`
+
+#### setDateByDayOfWeek
+**Input:** date : Date, date being processed | dayMatchArray : Array, input matched by `regExDayofWeek` | referenceDate : Date, current date \
+**Output:** date : Date, updated date based on day of week \
+**Description:** Finds the matching day of the week that the input is referring to and updates the date with that proper day. \
+**Associated Production(s):** None
+
+#### timeDecision
+**Input:** date : Date, date being processed | input : String, date to be parsed \
+**Output:** date : Date, date with the correct time \
+**Description:** Processes the time portion of the input and corrects the date with the current time. Supports absolute times as well as relative time (e.g. morning, night). \
+**Assocaited Production(s):** `AbsoluteTime -> MonthNumber ('am'| 'pm')`, `RelativeTime -> Morning | Afternoon | Evening | Night`
+
+---
+
+### **Other functions**
+
+#### liveUpdate
+**Parameters:** None \
+**Returns:** None \
+**Description:** Updates the currently recognized fields on the front-end.
+
+#### generateICS
+**Input:** arg : Integer, signals whether to preview ICS file or download \
+**Output:** None \
+**Description:** Generate properly formatted .ICS file (once user hits enter or clicks download btn. Arg 1 = download, arg 0 = view only.
+
+#### formatHTML
+**Input:** eventSummary : String, summary of calendar event | eventBegin : Date, start of the event | eventEnd : Date, end of the event | eventDescription : String, Additional description of the event \ 
+**Output:** output : HTML, formatted output \
+**Description:** Format live output HTML
+
+#### formatDate
+**Input:** date : Date, date to to be formatted \
+**Output:** date : Date, formatted date-time \
+**Description:** Format date and time in en-US locale depending on whether its an all day event or not.
+
+#### error
+**Input:** errorString : String, error to be output \
+**Output:** error : HTML, error to be displayed \
+**Description:** Format error strings in red and mark input as no good.
+
+#### onLoad
+**Input:** None \
+**Output:** None \
+**Description:** Automatically fills input using URL parameter and generates file immediately.
