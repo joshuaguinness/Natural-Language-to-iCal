@@ -128,12 +128,10 @@ function splitSummaryDate(input) {
 	eventBegin = "No date or time";
 	if (!eventEnd)
 	eventEnd = "No date or time";
-	if (eventBegin.toString().search('Invalid Date') >= 0 ) {
-		eventBegin = error("Could not parse date-time value (Error T5)");	
-	}
-	if (eventEnd.toString().search('Invalid Date') >= 0 ) {
-		eventEnd = error("Could not parse date-time value (Error T5)");	
-	}
+	if (eventBegin.toString().search('Invalid Date') >= 0 )
+		eventBegin = error("Could not parse date-time value (Error T5)");
+	if (eventEnd.toString().search('Invalid Date') >= 0 )
+		eventEnd = error("Could not parse date-time value (Error T5)");
 }
 
 // AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]
@@ -292,55 +290,57 @@ function timeDecision(date, input) {
 	
 	// AbsoluteTime -> MonthNumber ('am'| 'pm')
 	if (input.search('am') >= 0) {
-		parsedTime = input.split(' am');
+		parsedTime = input.split('am');
 		
 		// Test for invalid chars in time
 		if (/[a-zA-Z]/.test(parsedTime[0]))
-		return error("Time <i>" + parsedTime + "</i> contains unexpected characters (Error T6)");	
+		return error("Time <i>" + input + "</i> is invalid or contains unexpected characters (Error T6)");	
 		
 		if (parsedTime[0].search(':') >= 0)
 		parsedTime = parsedTime[0].split(':');
 		
 		// Test to ensure time has hour value at minimum
-		if (!parsedTime[0])
+		if (!parsedTime[0] || parsedTime[0] == " ")
 		return error("Time <i>" + input + "</i> is missing hour component (Error T7)");		
 		
 		if ((parsedTime[0] < 1) || (parsedTime[0] > 12))
 		return error("Hour value of time <i>" + input + "</i> not in expected range (Error T2)");
-		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? 12 : 0), 0, 0); } //Parse minutes
+		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? 12 : 0), 0, 0); }
 		catch { return "Could not parse <i>" + input + "</i> as time (Error T1)"; }
 		
+		// If minutes were provided, parse
 		if (parsedTime[1]) {
 			if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
 			return error("Minute value of time <i>" + input + "</i> not in expected range (Error T8)");
-			try { date.setMinutes(parseInt(parsedTime[1])); } //TODO Parse minutes also 2021.04.12
+			try { date.setMinutes(parseInt(parsedTime[1])); }
 			catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
 		}
 		return date;
 	} 
 	else if (input.search('pm') >= 0) {
-		parsedTime = input.split(' pm');
+		parsedTime = input.split('pm');
 		
 		// Test for invalid chars in time
 		if (/[a-zA-Z]/.test(parsedTime[0]))
-		return error("Time <i>" + parsedTime + "</i> contains unexpected characters (Error T6)");	
+		return error("Time <i>" + input + "</i> is invalid or contains unexpected characters (Error T6)");	
 		
 		if (parsedTime[0].search(':') >= 0)
 		parsedTime = parsedTime[0].split(':');
 		
 		// Test to ensure time has hour value at minimum
-		if (!parsedTime[0])
+		if (!parsedTime[0] || parsedTime[0] == " ")
 		return error("Time <i>" + input + "</i> is missing hour component (Error T7)");		
 		
 		if ((parsedTime[0] < 1) || (parsedTime[0] > 12))
 		return error("Hour value of time <i>" + input + "</i> not in expected range (Error T2)");
-		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? 0 : 12), 0, 0); } //Parse minutes
+		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? 0 : 12), 0, 0); }
 		catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
 		
+		// If minutes were provided, parse
 		if (parsedTime[1]) {
 			if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
 			return error("Minute value of time <i>" + input + "</i> not in expected range (Error T2)");
-			try { date.setMinutes(parseInt(parsedTime[1])); } //TODO Parse minutes also 2021.04.12
+			try { date.setMinutes(parseInt(parsedTime[1])); }
 			catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
 		}
 		return date;
@@ -487,4 +487,4 @@ module.exports = {
 	getEventEnd,
 	getEventDescription,
 	getEventSummary
-}
+}	
