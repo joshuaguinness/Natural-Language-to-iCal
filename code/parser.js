@@ -14,50 +14,6 @@ var relativeDate = "\\b(tom(?:orrow)?|tmrw|today|next|this)\\b";
 var dateTimeRange = "\\b((-)|(to)|(and))\\b"; //no spaces needed b/c \\b
 
 
-// Function to enter some sample text for manual testing/demo
-var i = 0;
-var txt;
-var speed = 10;
-
-function sampleInput(testNum) {	
-	var testStrings = ['Complete project by Wed Apr 14 at 9:30 pm. Submit everything on Gitlab',
-		'Project presentations from April 3 to April 6. Prepare slides',
-		'Group meeting on next tues at 11:15 am',
-		'This is an invalid input because there is no date or time.',
-		'This is also invalid from Appr 27 8:23 pm to mon at 2a2:03 pm. Due to bad date values',
-	'This is no good either between 1/31-12/30. Because of the invalid date range'];
-	
-	i = 0;
-	document.getElementById("userInput").value = "";
-	txt = testStrings[testNum - 1];
-	typeWriter();
-	return;
-}
-function typeWriter() {
-	if (i < txt.length) {
-		document.getElementById("userInput").value += txt.charAt(i);
-		i++;
-		setTimeout(typeWriter, speed);
-		liveUpdate();
-	}
-}
-
-
-// Function to enter some sample text for manual testing/demo
-// function sampleInput(testNum) {	
-	// var testStrings = ['Complete project by Wed Apr 14 at 9:30 pm. Submit everything on Gitlab',
-		// 'Project presentations from April 3 to April 6. Prepare slides',
-		// 'Group meeting on next tuesday at 11:15 am',
-		// 'This is an invalid input because there is no date or time.',
-		// 'This is also invalid from Appr 27 8:23 pm to mon at 2a2:03 pm. Due to bad date values',
-	// 'This is no good either between 1/31-12/30. Because of the invalid date range'];
-	
-	// document.getElementById('userInput').value = testStrings[testNum - 1];
-	// liveUpdate();
-	// return;
-// }
-
-
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
 function liveUpdate() {
 	// Get user's input from textbox and initialize global variables
@@ -140,17 +96,20 @@ function splitSummaryDate(input) {
 		catch { eventEnd = error("Could not find date range separator (Error S2)"); }
 	}
 	
-	console.log(eventBegin);
-	console.log(eventEnd);
-	
 	// If no summary-date separator in input, error
-	if (summaryDateSeparator == false) {
+	if (!summaryDateSeparator) {
 		eventSummary = input;
 		eventBegin = eventEnd = error("Could not find summary-date separator (Error S1)");
 		return;
-	}
-	
+	}	
 	eventSummary = splitted[0];
+	
+	
+	// Final output date error checks	
+	if (eventBegin.toString().search('Invalid Date') >= 0 )
+	eventBegin = error("Could not parse date-time value (Error T5)");
+	if (eventEnd.toString().search('Invalid Date') >= 0 )
+	eventEnd = error("Could not parse date-time value (Error T5)");
 	
 	// Store notices if certain fields are missing from input
 	if (!eventSummary)
@@ -159,10 +118,6 @@ function splitSummaryDate(input) {
 	eventBegin = "No date or time";
 	if (!eventEnd)
 	eventEnd = "No date or time";
-	if (eventBegin.toString().search('Invalid Date') >= 0 )
-	eventBegin = error("Could not parse date-time value (Error T5)");
-	if (eventEnd.toString().search('Invalid Date') >= 0 )
-	eventEnd = error("Could not parse date-time value (Error T5)");
 }
 
 // AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]
@@ -227,20 +182,18 @@ function parseRelativeDateTime(input) {
 	} 
 	else if (input.match('\\b(today)\\b')) {
 		console.log("Matched today");
-		date.setHours(date.getHours() + 2);
+		date.setDate(date.getDate());
 	} 
 	else if (input.match('\\b(this)\\b')) {
 		dayMatchArray = input.match(regExDayofWeek)
-		console.log(dayMatchArray);
 		try { date = setDateByDayOfWeek(date, dayMatchArray, referenceDate); }
 		catch { eventBegin = error("Could not parse <i>" + input + "</i> as a relative date (Error D4)"); return }
 	} 
 	else if (input.match('\\b(next)\\b')) {
 		dayMatchArray = input.match(regExDayofWeek)
-		console.log(dayMatchArray);
 		try { date = setDateByDayOfWeek(date, dayMatchArray, referenceDate); }
 		catch { eventBegin = error("Could not parse <i>" + input + "</i> as a relative date (Error D4)"); return }
-		date.setDate(date.getDate() + 7);
+		date.setDate(date.getDate() + 7); // Add 7 days to date for next week
 	}
 	
 	// [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]
@@ -252,10 +205,9 @@ function parseRelativeDateTime(input) {
 	} 
 	else if (input.search(' in the ') >= 0) {
 		splitted = input.split(' in the ');
-		console.log(splitted[1]);
 		date = timeDecision(date, splitted[1]);
 	}
-	eventBegin = date;	
+	eventBegin = date;
 	eventEnd = new Date(date);
 	if (allDay == 0)
 	eventEnd.setHours(eventEnd.getHours() + 1);
@@ -399,6 +351,20 @@ function timeDecision(date, input) {
 	return error("Could not parse <i>" + input + "</i> as time (Error T1)") 
 }
 
+// Format date and time in en-US locale for liveOutput (try catch since variable may contain non-date object) 
+function formatDate(date) {	
+	if (allDay) {
+		const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+		try {date = date.toLocaleDateString("en-US", options);}
+		catch {}
+	}
+	else {
+		const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+		try {date = date.toLocaleDateString("en-US", options) + ' ' + date.toLocaleTimeString();}
+		catch {}
+	}
+	return date
+}
 
 // Generate properly formatted .ICS file (once user hits enter or clicks download btn. Arg 1 = download, arg 0 = view only
 function generateICS(arg) {
@@ -416,7 +382,8 @@ function generateICS(arg) {
 	
 	// Give user the .ics or display the preview
 	if (arg) {
-		if (inputGood) // Download only if the input was acceptable
+		// Download only if the input was acceptable
+		if (inputGood)
 		icalOutput.download(eventSummary);
 	}
 	else
@@ -433,7 +400,7 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 	}
 	else {
 		document.getElementById("btnDownload").disabled = false; 
-		document.getElementById("helpText").innerHTML = 'Press Enter or click Download to generate an iCalendar file for your event.';
+		document.getElementById("helpText").innerHTML = '✅ Press Enter or click Download to generate an iCalendar file for your event.';
 	}
 	
 	// Return the parsed data in a user-friendly way for real-time display on page
@@ -455,22 +422,6 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 	output = output + '<li id="output-desc">Description: ' + eventDescription + '</li>';
 	
 	return output
-}
-
-
-// Format date and time in en-US locale (try catch required since variable may contain non-date object) 
-function formatDate(date) {	
-	if (allDay) {
-		const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-		try {date = date.toLocaleDateString("en-US", options);}
-		catch {}
-	}
-	else {
-		const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-		try {date = date.toLocaleDateString("en-US", options) + ' ' + date.toLocaleTimeString();}
-		catch {}
-	}
-	return date
 }
 
 // Format error strings in red and mark input as no good
@@ -500,6 +451,35 @@ function onLoad() {
 	if (inputString)
 	generateICS((previewOnly != null) ? 0 : 1);
 }
+
+// Functions & related variables to enter some sample text for manual testing/demo
+var i = 0;
+var txt;
+var speed = 10;
+
+function sampleInput(testNum) {	
+	var testStrings = ['Complete project by Wed Apr 14 at 9:30 pm. Submit everything on Gitlab',
+		'Project presentation between 4/16 at 10:30am to 4/16 at 10:40am. Prep slides',
+		'Meet with group by next saturday in the morning',
+		'This is an invalid input because there is no date or time.',
+		'This is also invalid from Appr 27 8:23 pm to mon at 2a2:03 pm. Due to bad date values',
+	'This is no good either between 1/31-12/30. Because of the invalid date range'];
+	
+	i = 0;
+	document.getElementById("userInput").value = "";
+	txt = testStrings[testNum - 1];
+	typeWriter();
+	return;
+}
+function typeWriter() {
+	if (i < txt.length) {
+		document.getElementById("userInput").value += txt.charAt(i);
+		i++;
+		setTimeout(typeWriter, speed);
+		liveUpdate();
+	}
+}
+
 
 // Temporary: for automated testing during development
 function getEventBegin() { return eventBegin; }
