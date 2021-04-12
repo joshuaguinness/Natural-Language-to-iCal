@@ -4,26 +4,26 @@
 // ==========================================================
 
 // Global variables
-var eventSummary, eventBegin, eventEnd, eventDescription // Vars for event field data
-var inputGood // Whether user's input is acceptable
-var allDay // Track whether event is an all-day event (no time specified)
+var eventSummary, eventBegin, eventEnd, eventDescription; // Vars for event field data
+var inputGood; // Whether user's input is acceptable
+var allDay; // Track whether event is an all-day event (no time specified)
 
 // Patterns to match from user's input
-var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b"
-var relativeDate = "\\b(tom(?:orrow)?|tmrw|today|next|this)\\b"
-var dateTimeRange = "\\b((-)|(to)|(and))\\b" //no spaces needed b/c \\b
+var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b";
+var relativeDate = "\\b(tom(?:orrow)?|tmrw|today|next|this)\\b";
+var dateTimeRange = "\\b((-)|(to)|(and))\\b"; //no spaces needed b/c \\b
 
 // Function to enter some sample text for manual testing/demo
 function sampleInput(testNum) {	
-	var testStrings = ['Complete project by Mon, Apr 12. Submit everything on Gitlab',
+	var testStrings = ['Complete project by Wed Apr 14 at 9:30 pm. Submit everything on Gitlab',
 		'Project presentations from April 3 to April 6. Prepare slides',
-		'Submit lab on next tuesday at 10 am. Worth 10 marks',
+		'Group meeting on next tuesday at 11:15 am',
 		'This is an invalid input because there is no date or time.',
-		'This is also invalid from  to frday. Due to bad date values',
-	'This is no good either between 1/31-1/30. Because of the invalid date range']
+		'This is also invalid from Appr 27 8:23 pm to mon at 2a2:03 pm. Due to bad date values',
+	'This is no good either between 1/31-12/30. Because of the invalid date range'];
 	
-	document.getElementById('userInput').value = testStrings[testNum - 1]
-	liveUpdate()
+	document.getElementById('userInput').value = testStrings[testNum - 1];
+	liveUpdate();
 	return;
 }
 
@@ -34,7 +34,7 @@ function liveUpdate() {
 	inputGood = 1; // Initially assume user's input is acceptable
 	allDay = 1; // And that the event is an all-day event
 	
-	if (userInput) // Hide live output area if input is empty
+	// Hide live output area if input is empty
 	document.getElementById("output").hidden = (userInput) ? false : true;
 	
 	// Call parsing functions
@@ -50,14 +50,14 @@ function splitAtPeriod(input) {
 	// Split description from rest of input	
 	splitted = input.split('. ');
 	splitted[1] ? eventDescription = splitted[1] : eventDescription = "No description"; 
-	splitSummaryDate(splitted[0])
+	splitSummaryDate(splitted[0]);
 	
 	return;
 }
 
 // Split the summary and date
 // DateTime -> (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime | (' from ' | ' between ') DateTimeRange
-function splitSummaryDate(input){	
+function splitSummaryDate(input) {	
 	// A separator can be found for Summary and DateTime
 	var summaryDateSeparator = false;
 	var splitted;
@@ -65,31 +65,33 @@ function splitSummaryDate(input){
 	// Don't match upper case separators since they can be abbrev/initials (ie "Complete project for McMaster University in Hamilton, ON by Monday")
 	
 	// (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime
-	if (input.search(' on ') >= 0){
+	if (input.search(' on ') >= 0) {
 		summaryDateSeparator = true;
 		splitted = input.split(' on ')
-		if (input.toLowerCase().match(relativeDate)){
-			parseRelativeDateTime(splitted[1])
-		} 
+		if (input.match(relativeDate)) {
+			parseRelativeDateTime(splitted[1]);
+		}
 		else {
 			eventBegin = parseAbsoluteDateTime(splitted[1])
 			eventEnd = parseAbsoluteDateTime(splitted[1])
 			// If not all day event, then set end time 1 hr after start time
-			if (allDay === 0)
-			try { eventEnd.setHours(eventEnd.getHours() + 1) }
-			catch { eventSummary = splitted[0]; return }
+			if (allDay == 0)
+			try { allDay == 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null; }
+			catch { eventEnd = error("Could not compute due to invalid start date (Error T3)"); }
 		}
 	} 
-	else if (input.search(' by ') >= 0){
+	else if (input.search(' by ') >= 0) {
 		summaryDateSeparator = true;
 		splitted = input.split(' by ')
-		if (input.toLowerCase().match(relativeDate)){
-			parseRelativeDateTime(splitted[1])
+		if (input.match(relativeDate)) {
+			parseRelativeDateTime(splitted[1]);
 		} 
 		else {
-			eventBegin = parseAbsoluteDateTime(splitted[1])
-			eventEnd = parseAbsoluteDateTime(splitted[1])
-			allDay === 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null;
+			eventBegin = parseAbsoluteDateTime(splitted[1]);
+			eventEnd = parseAbsoluteDateTime(splitted[1]);
+			if (allDay == 0)
+			try { allDay == 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null; }
+			catch { eventEnd = error("Could not compute due to invalid start date (Error T3)"); }
 		}
 	}
 	
@@ -97,53 +99,54 @@ function splitSummaryDate(input){
 	if (input.search(' from ') >= 0 ) {
 		summaryDateSeparator = true;
 		splitted = input.split(' from ');		
-		try {parseDateTimeRange(splitted[1]);}
-		catch {eventEnd = error("Could not find date range separator (Error S2)")}
+		try { parseDateTimeRange(splitted[1]); }
+		catch { eventEnd = error("Could not find date range separator (Error S2)"); }
 	}
 	else if (input.search(' between') >= 0) {
 		summaryDateSeparator = true;
 		splitted = input.split(' between ');
-		try {parseDateTimeRange(splitted[1]);}
-		catch {eventEnd = error("Could not find date range separator (Error S2)")}
+		try { parseDateTimeRange(splitted[1]);}
+		catch { eventEnd = error("Could not find date range separator (Error S2)"); }
 	}
 	
-	console.log(eventBegin)
-	console.log(eventEnd)
+	console.log(eventBegin);
+	console.log(eventEnd);
 	
 	// If no summary-date separator in input, error
-	if (summaryDateSeparator === false) {
+	if (summaryDateSeparator == false) {
 		eventSummary = input;
-		eventBegin = error("Could not find summary-date separator (Error S1)");
-		eventEnd = "No date or time";
-		return
+		eventBegin = eventEnd = error("Could not find summary-date separator (Error S1)");
+		return;
 	}
-
-eventSummary = splitted[0]
-
-// Store notices if certain fields are missing from input
-if (!eventSummary)
-eventSummary = "Untitled Event"	
-if (!eventBegin)
-eventBegin = "No date or time"
-if (!eventEnd)
-eventEnd = "No date or time"
+	
+	eventSummary = splitted[0];
+	
+	// Store notices if certain fields are missing from input
+	if (!eventSummary)
+	eventSummary = "Untitled Event";
+	if (!eventBegin)
+	eventBegin = "No date or time";
+	if (!eventEnd)
+	eventEnd = "No date or time";
+	if (eventBegin.toString().search('Invalid Date') >= 0 ) {
+		eventBegin = error("Could not parse date-time value (Error T5)");	
+	}
+	if (eventEnd.toString().search('Invalid Date') >= 0 ) {
+		eventEnd = error("Could not parse date-time value (Error T5)");	
+	}
 }
 
 // AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]
-function parseAbsoluteDateTime(input){
+function parseAbsoluteDateTime(input) {
 	// If date is missing altogether, reject
 	if (!input || input == " ")
-	return error("Could not find a date value (Error D1)")
+	return error("Could not find a date value (Error D1)");
 	
 	const referenceDate = new Date(); // Reference Date
 	var date = new Date(); // Date Time to modify
 	
 	var splitted = input.split(' at ');
-	if (splitted.length === 1){
-		allDay = 1
-		} else {
-		allDay = 0
-	}
+	allDay = splitted.length == 1 ? 1 : 0;
 	
 	// Try to initially create a Date Time object using input as-is (assume user has provided full date incl year)
 	var date = new Date(splitted[0]);
@@ -176,61 +179,62 @@ function parseAbsoluteDateTime(input){
 	}
 	
 	// If a time value is also provided, parse that separately and return.
-	if (allDay === 0)
-	date = timeDecision(date, splitted[1])	
-	return date
+	if (allDay == 0)
+	date = timeDecision(date, splitted[1]);
+	return date;
 }
 
 
 // Recognizes relative date strings from input and creates date object
 // RelativeDateTime -> RelativeDate [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]
-function parseRelativeDateTime(input){
+function parseRelativeDateTime(input) {
 	var date = new Date(); // Date Time to modify
 	const referenceDate = new Date(); // Reference Date	
 	input = input.toLowerCase();
 	
-	if (input.match('\\b(tom(?:orrow)?|tmrw)\\b')){
+	if (input.match('\\b(tom(?:orrow)?|tmrw)\\b')) {
 		console.log("Matched tomorrow");
 		date.setDate(date.getDate() + 1);
 	} 
-	else if (input.match('\\b(today)\\b')){
+	else if (input.match('\\b(today)\\b')) {
 		console.log("Matched today");
 		date.setHours(date.getHours() + 2);
 	} 
-	else if (input.match('\\b(this)\\b')){
+	else if (input.match('\\b(this)\\b')) {
 		dayMatchArray = input.match(regExDayofWeek)
 		console.log(dayMatchArray);
-		try {date = setDateByDayOfWeek(date, dayMatchArray, referenceDate);}
-		catch {eventBegin = error("Could not parse <i>" + input + "</i> as a relative date (Error D3)"); return}
+		try { date = setDateByDayOfWeek(date, dayMatchArray, referenceDate); }
+		catch { eventBegin = error("Could not parse <i>" + input + "</i> as a relative date (Error D4)"); return }
 	} 
-	else if (input.match('\\b(next)\\b')){
+	else if (input.match('\\b(next)\\b')) {
 		dayMatchArray = input.match(regExDayofWeek)
 		console.log(dayMatchArray);
-		try {date = setDateByDayOfWeek(date, dayMatchArray, referenceDate);}
-		catch {eventBegin = error("Could not parse <i>" + input + "</i> as a relative date (Error D3)"); return}
+		try { date = setDateByDayOfWeek(date, dayMatchArray, referenceDate); }
+		catch { eventBegin = error("Could not parse <i>" + input + "</i> as a relative date (Error D4)"); return }
 		date.setDate(date.getDate() + 7);
 	}
 	
 	// [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]
 	var splitted;
 	
-	if (input.search('at') >= 0){
-		splitted = input.split(' at ')
-		date = timeDecision(date, splitted[1])
-		} else if (input.search('in the') >= 0){
-		splitted = input.split(' in the ')
-		console.log(splitted[1])
-		date = timeDecision(date, splitted[1])
+	if (input.search(' at ') >= 0) {
+		splitted = input.split(' at ');
+		date = timeDecision(date, splitted[1]);
+	} 
+	else if (input.search(' in the ') >= 0) {
+		splitted = input.split(' in the ');
+		console.log(splitted[1]);
+		date = timeDecision(date, splitted[1]);
 	}
 	eventBegin = date;	
 	eventEnd = new Date(date);
-	allDay === 0 ? eventEnd.setHours(eventEnd.getHours() + 1) : null;
+	if (allDay == 0)
+	eventEnd.setHours(eventEnd.getHours() + 1);
 	return;
 }
 
 // DateTimeRange -> AbsoluteDateTime ('-' | ' to ' | ' and ') AbsoluteDateTime
-function parseDateTimeRange(input){
-	
+function parseDateTimeRange(input) {	
 	// Match the regex and split on that match
 	rangeMatch = input.match(dateTimeRange);
 	splitted = input.split(rangeMatch[0]);
@@ -239,15 +243,14 @@ function parseDateTimeRange(input){
 	eventBegin = parseAbsoluteDateTime(splitted[0]);
 	eventEnd = parseAbsoluteDateTime(splitted[1]);
 	
-	// Ensure end date is after start date.
-	if (eventBegin > eventEnd){
-		eventEnd = error("<i>" + formatDate(eventEnd) + "</i> precedes start date (Error D3)");
-	}
-	
+	// Ensure end date is after start date. (compare only when both vars contain date object)
+	if ((eventBegin > eventEnd) && ((typeof(eventBegin)) == "object") && ((typeof(eventEnd)) == "object"))
+	eventEnd = error("<i>" + formatDate(eventEnd) + "</i> precedes start date (Error D3)");
 	return;
 }
 
-function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
+// Parses day of week name from input, returns date of closest upcoming matching day 
+function setDateByDayOfWeek(date, dayMatchArray, referenceDate) {
 	dayOfWeek = dayMatchArray[0].toLowerCase();	
 	var date = new Date(); // Date Time to modify
 	
@@ -271,12 +274,11 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 	numberOfWeek = -1;	
 	
 	if (numberOfWeek == -1)
-	return error("Could not parse <i>" + dayOfWeek + "</i> as a relative date (Error D3)") // Should not occur since input is checked against regex beforehand
+	return error("Could not parse <i>" + dayOfWeek + "</i> as a relative date (Error D5)"); // Should not occur since input is checked against regex beforehand
 	else if (numberOfWeek > referenceDate.getDay())
-	date.setDate(date.getDate() + (numberOfWeek - date.getDay())) // Input is an upcoming day this week
+	date.setDate(date.getDate() + (numberOfWeek - date.getDay())); // Input is an upcoming day this week
 	else
-	date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek)) // Input is an upcoming day next week
-	
+	date.setDate(date.getDate() + 7 - (date.getDay() - numberOfWeek)); // Input is an upcoming day next week	
 	return date;
 }
 
@@ -284,36 +286,86 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate){
 function timeDecision(date, input) {	
 	allDay = 0;
 	
+	try { input = input.toLowerCase(); }
+	catch { return error("Could not parse <i>" + input + "</i> as date with time (Error T4)") }
+	var parsedTime;
+	
 	// AbsoluteTime -> MonthNumber ('am'| 'pm')
-	if (input.search('am') >= 0){
-		var splitted = input.split(' am');
-		console.log(splitted);
-		try {date.setHours(parseInt(splitted[0]), 0, 0);}
-		catch {return "Could not parse date with time"}
+	if (input.search('am') >= 0) {
+		parsedTime = input.split(' am');
+		
+		// Test for invalid chars in time
+		if (/[a-zA-Z]/.test(parsedTime[0]))
+		return error("Time <i>" + parsedTime + "</i> contains unexpected characters (Error T6)");	
+		
+		if (parsedTime[0].search(':') >= 0)
+		parsedTime = parsedTime[0].split(':');
+		
+		// Test to ensure time has hour value at minimum
+		if (!parsedTime[0])
+		return error("Time <i>" + input + "</i> is missing hour component (Error T7)");		
+		
+		if ((parsedTime[0] < 1) || (parsedTime[0] > 12))
+		return error("Hour value of time <i>" + input + "</i> not in expected range (Error T2)");
+		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? 12 : 0), 0, 0); } //Parse minutes
+		catch { return "Could not parse <i>" + input + "</i> as time (Error T1)"; }
+		
+		if (parsedTime[1]) {
+			if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
+			return error("Minute value of time <i>" + input + "</i> not in expected range (Error T8)");
+			try { date.setMinutes(parseInt(parsedTime[1])); } //TODO Parse minutes also 2021.04.12
+			catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
+		}
 		return date;
-		} else if (input.search('pm') >= 0){
-		var splitted = input.split(' pm');
-		date.setHours(parseInt(splitted[0]) + 12, 0, 0);
+	} 
+	else if (input.search('pm') >= 0) {
+		parsedTime = input.split(' pm');
+		
+		// Test for invalid chars in time
+		if (/[a-zA-Z]/.test(parsedTime[0]))
+		return error("Time <i>" + parsedTime + "</i> contains unexpected characters (Error T6)");	
+		
+		if (parsedTime[0].search(':') >= 0)
+		parsedTime = parsedTime[0].split(':');
+		
+		// Test to ensure time has hour value at minimum
+		if (!parsedTime[0])
+		return error("Time <i>" + input + "</i> is missing hour component (Error T7)");		
+		
+		if ((parsedTime[0] < 1) || (parsedTime[0] > 12))
+		return error("Hour value of time <i>" + input + "</i> not in expected range (Error T2)");
+		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? 0 : 12), 0, 0); } //Parse minutes
+		catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
+		
+		if (parsedTime[1]) {
+			if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
+			return error("Minute value of time <i>" + input + "</i> not in expected range (Error T2)");
+			try { date.setMinutes(parseInt(parsedTime[1])); } //TODO Parse minutes also 2021.04.12
+			catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
+		}
 		return date;
 	}
 	
 	// RelativeTime -> Morning | Afternoon | Evening | Night
-	if (input.toLowerCase().search('morning') >= 0){
+	if (input.search('morning') >= 0) {
 		date.setHours(9, 0, 0);
 		return date;
-		} else if (input.toLowerCase().search('afternoon') >= 0){
+	} 
+	else if (input.search('afternoon') >= 0) {
 		date.setHours(13, 0, 0);
 		return date;
-		} else if (input.toLowerCase().search('evening') >= 0){
+	} 
+	else if (input.search('evening') >= 0) {
 		date.setHours(17, 0, 0);
 		return date;
-		} else if (input.toLowerCase().search('night') >= 0){
-		date.setHours(21, 0, 0)
+	} 
+	else if (input.search('night') >= 0) {
+		date.setHours(21, 0, 0);
 		return date;
 	}
 	
 	// Error if time parsing failed (For inputs like "Something on tuesday at 11:30 fm")
-	return error("Could not parse <i>" + input + " as time </i>") 
+	return error("Could not parse <i>" + input + "</i> as time (Error T1)") 
 }
 
 
@@ -357,24 +409,19 @@ function formatHTML(eventSummary, eventBegin, eventEnd, eventDescription) {
 	var output = '<li id="output-summary">Summary: <span class="output">' + eventSummary + 
 	'</span></li>';	
 	
-	if (formatDate(eventBegin) == formatDate(eventEnd)) //If start and end times are identical, just show one date field
-	output = output + '<li id="output-date-single">Event Date: <span class="output">' + formatDate(eventBegin) +
-	'</span></li>';
+	if (formatDate(eventBegin) == formatDate(eventEnd)) // If start and end times are identical, just show one date field
+	output = output + '<li id="output-date-single">Event Date: <span class="output">' + formatDate(eventBegin) + '</span></li>';
 	else
-	output = output + '<li id="output-date-start">Date Start: <span class="output">' + formatDate(eventBegin) +
-	'</span></li>';
+	output = output + '<li id="output-date-start">Date Start: <span class="output">' + formatDate(eventBegin) + '</span></li>';
 	
-	if (formatDate(eventBegin) != formatDate(eventEnd))	
+	if (formatDate(eventBegin) != formatDate(eventEnd))	// If dates are different, show both fields
 	if (eventEnd != "No date or time")
-	output = output + '<li id="output-date-end">Date End: <span class="output">' + formatDate(eventEnd) + 
-	'</span></li>';	
+	output = output + '<li id="output-date-end">Date End: <span class="output">' + formatDate(eventEnd) + '</span></li>';	
 	
-	if (eventDescription != "No description")
-	output = output + '<li id="output-desc">Description: <span class="output">' + eventDescription + 
-	'</span></li>';
+	if (eventDescription != "No description") // Gray out description field if none provided
+	output = output + '<li id="output-desc">Description: <span class="output">' + eventDescription + '</span></li>';
 	else
-	output = output + '<li id="output-desc">Description: ' + eventDescription + 
-	'</li>';
+	output = output + '<li id="output-desc">Description: ' + eventDescription + '</li>';
 	
 	return output
 }
