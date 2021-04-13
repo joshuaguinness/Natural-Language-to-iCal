@@ -312,3 +312,16 @@ test("splitSummaryDate: no event summary", () => {
 })
 
 // splitAtPeriod tests
+test("splitAtPeriod: with description", () => {
+    const input = "Complete project by Apr 14 2001 at 9:30 pm. Submit everything on Gitlab.";
+    const expected = "Submit everything on Gitlab.";
+    parser.splitAtPeriod(input);
+    expect(parser.getEventDescription()).toBe(expected);
+})
+
+test("splitAtPeriod: without description", () => {
+    const input = "Complete project by Apr 14 2001 at 9:30 pm.";
+    const expected = "No description";
+    parser.splitAtPeriod(input);
+    expect(parser.getEventDescription()).toBe(expected);
+})
