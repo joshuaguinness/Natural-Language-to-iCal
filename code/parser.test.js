@@ -370,3 +370,21 @@ test("timeDecision: time has hour value outside of range", () => {
     expect(parser.timeDecision(date, inputUnderPM)).toBe(expectedUnderPM);
     expect(parser.timeDecision(date, inputOverPM)).toBe(expectedOverPM);
 })
+
+test("timeDecision: time has minute value outside of range", () => {
+    const date = new Date();
+
+    const inputUnderAM = "1:-10 am";
+    const expectedUnderAM = "<span class=\"output-error\">Minute value of time <i>1:-10 am</i> not in expected range (Error T8)</span>";
+    const inputOverAM = "1:60 am";
+    const expectedOverAM = "<span class=\"output-error\">Minute value of time <i>1:60 am</i> not in expected range (Error T8)</span>";
+    expect(parser.timeDecision(date, inputUnderAM)).toBe(expectedUnderAM);
+    expect(parser.timeDecision(date, inputOverAM)).toBe(expectedOverAM);
+
+    const inputUnderPM = "1:-10 pm";
+    const expectedUnderPM = "<span class=\"output-error\">Minute value of time <i>1:-10 pm</i> not in expected range (Error T8)</span>";
+    const inputOverPM = "1:60 pm";
+    const expectedOverPM = "<span class=\"output-error\">Minute value of time <i>1:60 pm</i> not in expected range (Error T8)</span>";
+    expect(parser.timeDecision(date, inputUnderPM)).toBe(expectedUnderPM);
+    expect(parser.timeDecision(date, inputOverPM)).toBe(expectedOverPM);
+})
