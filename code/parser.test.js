@@ -223,3 +223,11 @@ test("splitSummaryDate: summary-date separator \"on\" with relative date", () =>
     expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
     expect(parser.getEventBegin().toTimeString()).toBe(expected.toTimeString());
 })
+
+test("splitSummaryDate: error handling summary-date separator \"on\"", () => {
+    const input = "Complete project on test at 9:30 pm.";
+    const expected = "<span class=\"output-error\">Could not compute due to invalid start date (Error T3)</span>";
+    parser.splitSummaryDate(input);
+    console.log(parser.getEventEnd());
+    expect(parser.getEventEnd()).toBe(expected);
+})
