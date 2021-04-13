@@ -342,3 +342,13 @@ test("timeDecision: invalid characters in time", () => {
     expect(parser.timeDecision(date, inputAM)).toBe(expectedAM);
     expect(parser.timeDecision(date, inputPM)).toBe(expectedPM);
 })
+
+test("timeDecision: time has hour value outside of range", () => {
+    const inputUnder = 0;
+    const expectedUnder = "<span class=\"output-error\">Could not parse <i>0</i> as date with time (Error T4)</span>";
+    const inputOver = 13;
+    const expectedOver = "<span class=\"output-error\">Could not parse <i>13</i> as date with time (Error T4)</span>";
+    const date = new Date();
+    expect(parser.timeDecision(date, inputUnder)).toBe(expectedUnder);
+    expect(parser.timeDecision(date, inputOver)).toBe(expectedOver);
+})
