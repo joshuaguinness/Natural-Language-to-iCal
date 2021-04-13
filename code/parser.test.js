@@ -271,6 +271,13 @@ test("splitSummaryDate: range separator \"from\"", () => {
     expect(parser.getEventEnd().toTimeString()).toBe(expectedEnd.toTimeString());
 })
 
+test("splitSummaryDate: error handling range separator \"from\"", () => {
+    const input = "Project presentation from test.";
+    const expected = "<span class=\"output-error\">Could not find date range separator (Error S2)</span>";
+    parser.splitSummaryDate(input);
+    expect(parser.getEventEnd()).toBe(expected);
+})
+
 test("splitSummaryDate: range separator \"between\"", () => {
     const input = "Project presentation between 4/16/2021 at 10:30am to 4/16/2021 at 10:40am.";
     const expectedBegin = new Date("April 16, 2021 10:30 am");
@@ -280,4 +287,11 @@ test("splitSummaryDate: range separator \"between\"", () => {
     expect(parser.getEventBegin().toTimeString()).toBe(expectedBegin.toTimeString());
     expect(parser.getEventEnd().toDateString()).toBe(expectedEnd.toDateString());
     expect(parser.getEventEnd().toTimeString()).toBe(expectedEnd.toTimeString());
+})
+
+test("splitSummaryDate: error handling range separator \"between\"", () => {
+    const input = "Project presentation between test.";
+    const expected = "<span class=\"output-error\">Could not find date range separator (Error S2)</span>";
+    parser.splitSummaryDate(input);
+    expect(parser.getEventEnd()).toBe(expected);
 })
