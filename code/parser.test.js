@@ -2,7 +2,6 @@ const parser = require("./parser");
 
 // TODO: Create tests for regex
 // TODO: Create tests for end date before start date
-// TODO: Test splitAtPeriod
 // TODO: Test timeDecision
 
 // setDateByDayOfWeek tests
@@ -324,4 +323,12 @@ test("splitAtPeriod: without description", () => {
     const expected = "No description";
     parser.splitAtPeriod(input);
     expect(parser.getEventDescription()).toBe(expected);
+})
+
+// timeDecision tests
+test("timeDecision: error handling on non-string input", () => {
+    const input = 0;
+    const date = new Date();
+    const expected = "<span class=\"output-error\">Could not parse <i>0</i> as date with time (Error T4)</span>";
+    expect(parser.timeDecision(date, input)).toBe(expected);
 })
