@@ -259,3 +259,14 @@ test("splitSummaryDate: error handling summary-date separator \"by\"", () => {
     parser.splitSummaryDate(input);
     expect(parser.getEventEnd()).toBe(expected);
 })
+
+test("splitSummaryDate: range separator \"from\"", () => {
+    const input = "Project presentation from 4/16/2021 at 10:30am to 4/16/2021 at 10:40am.";
+    const expectedBegin = new Date("April 16, 2021 10:30 am");
+    const expectedEnd = new Date("April 16, 2021 10:40 am");
+    parser.splitSummaryDate(input);
+    expect(parser.getEventBegin().toDateString()).toBe(expectedBegin.toDateString());
+    expect(parser.getEventBegin().toTimeString()).toBe(expectedBegin.toTimeString());
+    expect(parser.getEventEnd().toDateString()).toBe(expectedEnd.toDateString());
+    expect(parser.getEventEnd().toTimeString()).toBe(expectedEnd.toTimeString());
+})
