@@ -304,3 +304,10 @@ test("splitSummaryDate: no separator", () => {
     expect(parser.getEventBegin()).toBe(expected);
     expect(parser.getEventEnd()).toBe(expected);
 })
+
+test("splitSummaryDate: no event summary", () => {
+    const input = " between 4/16/2021 at 10:30am to 4/16/2021 at 10:40am.";
+    const expected = "Untitled Event";
+    parser.splitSummaryDate(input);
+    expect(parser.getEventSummary()).toBe(expected);
+})
