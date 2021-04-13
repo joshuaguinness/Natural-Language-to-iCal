@@ -322,7 +322,7 @@ function timeDecision(date, input) {
 		// If minutes were provided, parse
 		if (parsedTime[1]) {
 			if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
-			return error("Minute value of time <i>" + input + "</i> not in expected range (Error T2)");
+			return error("Minute value of time <i>" + input + "</i> not in expected range (Error T8)");
 			try { date.setMinutes(parseInt(parsedTime[1])); }
 			catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
 		}
