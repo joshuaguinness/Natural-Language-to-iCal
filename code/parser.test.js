@@ -402,3 +402,17 @@ test("timeDecision: no minutes", () => {
     expectedPM.setHours(10+12, 0, 0);
     expect(parser.timeDecision(date, inputPM).toTimeString()).toBe(expectedPM.toTimeString());
 })
+
+test("timeDecision: regular input with hours and minutes", () => {
+    const date = new Date();
+
+    const inputAM = "10:10 am";
+    let expectedAM = new Date();
+    expectedAM.setHours(10, 10, 0);
+    expect(parser.timeDecision(date, inputAM).toTimeString()).toBe(expectedAM.toTimeString());
+
+    const inputPM = "10:10 pm";
+    let expectedPM = new Date();
+    expectedPM.setHours(10+12, 10, 0);
+    expect(parser.timeDecision(date, inputPM).toTimeString()).toBe(expectedPM.toTimeString());
+})
