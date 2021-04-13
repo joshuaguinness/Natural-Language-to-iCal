@@ -47,19 +47,25 @@ test("parseAbsoluteDateTime: date slash format", () => {
 test("parseAbsoluteDateTime: date slash format without year", () => {
     const input = "4/6";
     let event = parser.parseAbsoluteDateTime(input);
+    const currentDate = new Date();
     let expected = new Date();
     expected.setDate(6);
     expected.setMonth(3);
+    if(currentDate > expected) {expected.setFullYear(expected.getFullYear() + 1);}
     expect(event.toDateString()).toBe(expected.toDateString())
 })
 
 test("parseAbsoluteDateTime: date written format without year", () => {
-    const input = "Apr 12";
+    const input = "Apr 11";
     let event = parser.parseAbsoluteDateTime(input);
-    const expectedYear = new Date().getFullYear();
-    expect(event.getMonth()).toBe(3);
-    expect(event.getDate()).toBe(12);
-    expect(event.getFullYear()).toBe(expectedYear);
+    
+    const currentDate = new Date();
+    let expected = new Date();
+    expected.setDate(11);
+    expected.setMonth(3);
+    if(currentDate > expected) {expected.setFullYear(expected.getFullYear() + 1);}
+
+    expect(event.toDateString()).toBe(expected.toDateString())
 })
 
 test("parseAbsoluteDateTime: date written format", () => {
@@ -97,14 +103,17 @@ test("parseDateTimeRange: date range", () => {
 })
 
 test("parseDateTimeRange: date range without year", () => {
-    const input = "April 12 to April 20";
-    const currentYear = new Date().getFullYear();
-    let expectedBegin = new Date("April 12");
-    expectedBegin.setFullYear(currentYear);
-    let expectedEnd = new Date("April 20");
-    expectedEnd.setFullYear(currentYear);
+    const input = "March 12 to March 20";
+    const currentDate = new Date();
+    let expectedBegin = new Date("March 12");
+    expectedBegin.setFullYear(currentDate.getFullYear())
+    let expectedEnd = new Date("March 20");
+    expectedEnd.setFullYear(currentDate.getFullYear())
+
+    if(currentDate > expectedBegin) {expectedBegin.setFullYear(expectedBegin.getFullYear() + 1);}
+    if(currentDate > expectedEnd) {expectedEnd.setFullYear(expectedEnd.getFullYear() + 1);}
     
-    parser.parseDateTimeRange(input);
+    parser.parseDateTimeRange(input); 
     expect(parser.getEventBegin().toDateString()).toBe(expectedBegin.toDateString());
     expect(parser.getEventEnd().toDateString()).toBe(expectedEnd.toDateString());
 })
