@@ -354,11 +354,19 @@ test("timeDecision: time missing hour value", () => {
 })
 
 test("timeDecision: time has hour value outside of range", () => {
-    const inputUnder = 0;
-    const expectedUnder = "<span class=\"output-error\">Could not parse <i>0</i> as date with time (Error T4)</span>";
-    const inputOver = 13;
-    const expectedOver = "<span class=\"output-error\">Could not parse <i>13</i> as date with time (Error T4)</span>";
     const date = new Date();
-    expect(parser.timeDecision(date, inputUnder)).toBe(expectedUnder);
-    expect(parser.timeDecision(date, inputOver)).toBe(expectedOver);
+
+    const inputUnderAM = "0:00 am";
+    const expectedUnderAM = "<span class=\"output-error\">Hour value of time <i>0:00 am</i> not in expected range (Error T2)</span>";
+    const inputOverAM = "13:00 am";
+    const expectedOverAM = "<span class=\"output-error\">Hour value of time <i>13:00 am</i> not in expected range (Error T2)</span>";
+    expect(parser.timeDecision(date, inputUnderAM)).toBe(expectedUnderAM);
+    expect(parser.timeDecision(date, inputOverAM)).toBe(expectedOverAM);
+
+    const inputUnderPM = "0:00 pm";
+    const expectedUnderPM = "<span class=\"output-error\">Hour value of time <i>0:00 pm</i> not in expected range (Error T2)</span>";
+    const inputOverPM = "13:00 pm";
+    const expectedOverPM = "<span class=\"output-error\">Hour value of time <i>13:00 pm</i> not in expected range (Error T2)</span>";
+    expect(parser.timeDecision(date, inputUnderPM)).toBe(expectedUnderPM);
+    expect(parser.timeDecision(date, inputOverPM)).toBe(expectedOverPM);
 })
