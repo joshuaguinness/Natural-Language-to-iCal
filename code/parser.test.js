@@ -416,3 +416,19 @@ test("timeDecision: regular input with hours and minutes", () => {
     expectedPM.setHours(10+12, 10, 0);
     expect(parser.timeDecision(date, inputPM).toTimeString()).toBe(expectedPM.toTimeString());
 })
+
+test("timeDecision: relative time", () => {
+    const relativeTimes = [
+        "morning",
+        "afternoon",
+        "evening",
+        "night"
+    ];
+    const date = new Date();
+    let expected = new Date();
+
+    for(let i = 0; i < relativeTimes.length; i++) {
+        expected.setHours(9 + i*4, 0, 0);
+        expect(parser.timeDecision(date, relativeTimes[i]).toTimeString()).toBe(expected.toTimeString())
+    }
+})
