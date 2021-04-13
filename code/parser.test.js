@@ -2,7 +2,6 @@ const parser = require("./parser");
 
 // TODO: Create tests for regex
 // TODO: Create tests for end date before start date
-// TODO: Test splitSummaryDate
 // TODO: Test splitAtPeriod
 // TODO: Test timeDecision
 
@@ -311,3 +310,5 @@ test("splitSummaryDate: no event summary", () => {
     parser.splitSummaryDate(input);
     expect(parser.getEventSummary()).toBe(expected);
 })
+
+// splitAtPeriod tests
