@@ -494,6 +494,7 @@ module.exports = {
 	parseDateTimeRange, 
 	parseAbsoluteDateTime, 
 	setDateByDayOfWeek,
+	timeDecision,
 	getEventBegin,
 	getEventEnd,
 	getEventDescription,
