@@ -343,6 +343,13 @@ test("timeDecision: invalid characters in time", () => {
     expect(parser.timeDecision(date, inputPM)).toBe(expectedPM);
 })
 
+test("timeDecision: time missing hour value", () => {
+    const input = ":12 am";
+    const date = new Date();
+    const expected = "<span class=\"output-error\">Time <i>:12 am</i> is missing hour component (Error T7)</span>";
+    expect(parser.timeDecision(date, input)).toBe(expected);
+})
+
 test("timeDecision: time has hour value outside of range", () => {
     const inputUnder = 0;
     const expectedUnder = "<span class=\"output-error\">Could not parse <i>0</i> as date with time (Error T4)</span>";
