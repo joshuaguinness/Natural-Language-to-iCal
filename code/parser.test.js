@@ -1,9 +1,5 @@
 const parser = require("./parser");
 
-// TODO: Create tests for regex
-// TODO: Create tests for end date before start date
-// TODO: Test timeDecision
-
 // setDateByDayOfWeek tests
 test("setDateByDayOfWeek: set event to day of the week ", () => {
     const referenceDate = new Date("April 12, 2021 09:00:00"); // Monday
