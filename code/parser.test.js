@@ -200,3 +200,11 @@ test("parseRelativeDateTime: error handling \"next\"", () => {
     parser.parseRelativeDateTime(input);
     expect(parser.getEventBegin()).toBe(expected);
 })
+
+// splitSummaryDate tests
+test("splitSummaryDate: summary-date separator \"on\" with absolute date", () => {
+    const input = "Complete project on Wed Apr 14 2021 at 9:30 pm.";
+    const expected = new Date("Apr 14 2021 9:30 pm");
+    parser.splitSummaryDate(input);
+    expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
+})
