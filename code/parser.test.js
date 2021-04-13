@@ -231,3 +231,11 @@ test("splitSummaryDate: error handling summary-date separator \"on\"", () => {
     console.log(parser.getEventEnd());
     expect(parser.getEventEnd()).toBe(expected);
 })
+
+test("splitSummaryDate: summary-date separator \"by\" with absolute date", () => {
+    const input = "Complete project by Wed Apr 14 2021 at 9:30 pm.";
+    const expected = new Date("Apr 14 2021 9:30 pm");
+    parser.splitSummaryDate(input);
+    expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
+    expect(parser.getEventBegin().toTimeString()).toBe(expected.toTimeString());  
+})
