@@ -295,3 +295,12 @@ test("splitSummaryDate: error handling range separator \"between\"", () => {
     parser.splitSummaryDate(input);
     expect(parser.getEventEnd()).toBe(expected);
 })
+
+test("splitSummaryDate: no separator", () => {
+    const input = "test";
+    const expected = "<span class=\"output-error\">Could not find summary-date separator (Error S1)</span>";
+    parser.splitSummaryDate(input);
+    expect(parser.getEventSummary()).toBe(input);
+    expect(parser.getEventBegin()).toBe(expected);
+    expect(parser.getEventEnd()).toBe(expected);
+})
