@@ -432,3 +432,10 @@ test("timeDecision: relative time", () => {
         expect(parser.timeDecision(date, relativeTimes[i]).toTimeString()).toBe(expected.toTimeString())
     }
 })
+
+test("timeDecision: invalid \"am\" and \"pm\"", () => {
+    const input = "10:30 fm";
+    const date = new Date();
+    const expected = "<span class=\"output-error\">Could not parse <i>10:30 fm</i> as time (Error T1)</span>";
+    expect(parser.timeDecision(date, input)).toBe(expected);
+})
