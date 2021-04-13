@@ -209,3 +209,17 @@ test("splitSummaryDate: summary-date separator \"on\" with absolute date", () =>
     expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
     expect(parser.getEventBegin().toTimeString()).toBe(expected.toTimeString());  
 })
+
+test("splitSummaryDate: summary-date separator \"on\" with relative date", () => {
+    const input = "Complete project on next Wednesday at 9:30 pm.";
+    const referenceDate = new Date();
+    const dayMatch = ["wed", "wednesday"];
+    const date = new Date();
+    let expected = parser.setDateByDayOfWeek(date, dayMatch, referenceDate);
+    expected.setDate(expected.getDate() + 7);
+    expected.setHours(21, 30, 0);
+
+    parser.splitSummaryDate(input);
+    expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
+    expect(parser.getEventBegin().toTimeString()).toBe(expected.toTimeString());
+})
