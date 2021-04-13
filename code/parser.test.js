@@ -187,3 +187,10 @@ test("parseRelativeDateTime: relative time \"in the\"", () => {
     expect(parser.getEventBegin().toDateString()).toBe(expected.toDateString());
     expect(parser.getEventBegin().toTimeString()).toBe(expected.toTimeString());
 })
+
+test("parseRelativeDateTime: error handling \"this\"", () => {
+    const input = "this test at 10 AM";
+    const expected = "<span class=\"output-error\">Could not parse <i>this test at 10 am</i> as a relative date (Error D4)</span>";
+    parser.parseRelativeDateTime(input);
+    expect(parser.getEventBegin()).toBe(expected);
+})
