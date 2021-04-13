@@ -2,7 +2,6 @@ const parser = require("./parser");
 
 // TODO: Create tests for regex
 // TODO: Create tests for end date before start date
-// TODO: Test parseDateTime
 // TODO: Test splitSummaryDate
 // TODO: Test splitAtPeriod
 // TODO: Test timeDecision
