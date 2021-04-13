@@ -332,3 +332,13 @@ test("timeDecision: error handling on non-string input", () => {
     const expected = "<span class=\"output-error\">Could not parse <i>0</i> as date with time (Error T4)</span>";
     expect(parser.timeDecision(date, input)).toBe(expected);
 })
+
+test("timeDecision: invalid characters in time", () => {
+    const date = new Date();
+    const inputAM = "10:2qam";
+    const expectedAM = "<span class=\"output-error\">Time <i>10:2qam</i> is invalid or contains unexpected characters (Error T6)</span>";
+    const inputPM = "10:2qpm";
+    const expectedPM = "<span class=\"output-error\">Time <i>10:2qpm</i> is invalid or contains unexpected characters (Error T6)</span>";
+    expect(parser.timeDecision(date, inputAM)).toBe(expectedAM);
+    expect(parser.timeDecision(date, inputPM)).toBe(expectedPM);
+})
