@@ -334,6 +334,10 @@ function timeDecision(date, input) {
 		date.setHours(9, 0, 0);
 		return date;
 	} 
+	else if (input.search('noon') >= 0) {
+		date.setHours(12, 0, 0);
+		return date;
+	} 
 	else if (input.search('afternoon') >= 0) {
 		date.setHours(13, 0, 0);
 		return date;
@@ -459,7 +463,7 @@ var speed = 10;
 
 function sampleInput(testNum) {	
 	var testStrings = ['Complete project by Wed Apr 14 at 9:30 pm. Submit everything on Gitlab',
-		'Project presentation between 4/16 at 10:30am to 4/16 at 10:40am. Prep slides',
+		'Project presentation from 4/16 at 10:30am to 4/16 at 10:40am. Prep slides',
 		'Meet with group by next saturday in the morning',
 		'This is an invalid input because there is no date or time.',
 		'This is also invalid from Appr 27 8:23 pm to mon at 2a2:03 pm. Due to bad date values',
