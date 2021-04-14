@@ -334,12 +334,12 @@ function timeDecision(date, input) {
 		date.setHours(9, 0, 0);
 		return date;
 	} 
-	else if (input.search('noon') >= 0) {
-		date.setHours(12, 0, 0);
-		return date;
-	} 
 	else if (input.search('afternoon') >= 0) {
 		date.setHours(13, 0, 0);
+		return date;
+	} 
+	else if (input.search('noon') >= 0) {
+		date.setHours(12, 0, 0);
 		return date;
 	} 
 	else if (input.search('evening') >= 0) {
