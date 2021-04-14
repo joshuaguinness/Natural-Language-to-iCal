@@ -3,16 +3,16 @@
 _Group 9: Joshua Guinness, Arkin Modi, Jason Kim_
 
 ### Project Overview
-This repository hosts the code and accompanying documentation for our group's language processor, which converts a user’s schedule information from a natural language input to an output in the standard iCalendar (.ics) format.
+This repository hosts the code and accompanying documentation for our group's language processor, which converts a user’s schedule information from a natural language input to an output in the standard [iCalendar](https://en.wikipedia.org/wiki/iCalendar) (.ics) format.
 
-Users are able to easily create new calendar events using only their keyboard, providing information such as the event's name, date, and time together as part of one input string.
+Users can easily create new calendar events using only their keyboard, providing information such as the event's name, date, and time together as part of one input string.
 
 For example, natural language user input such as the following:
-```js
+```
 Discuss project by this monday at 4pm. Bring notes
 ```
 Would be converted to a structured format similar to:
-```js
+```
 BEGIN:VCALENDAR​
 PRODID:Calendar​
 VERSION:2.0​
