@@ -14,7 +14,7 @@ MonthNumber -> 1 | ... | 12
 MonthName -> 'Jan' [ 'uary' ] | ... | 'Dec' [ 'ember' ]
 Year -> ( 2002 | ... | 2999 ) | ( 02 | ... | 99 )
 AbsoluteTime -> MonthNumber ('am'| 'pm')
-RelativeTime -> Morning | Noon | Afternoon | Evening | Night
+RelativeTime -> 'morning' | 'noon' | 'afternoon | 'evening' | 'night'
 Description -> [ Word ]*
 Word -> [a-zA-Z0-9]+ | '!' | '?' | ' ' | '-' | '_' | ...
 ```
