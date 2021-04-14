@@ -38,6 +38,7 @@ function liveUpdate() {
 }
 
 // Split input string at "."
+// S -> Summary DateTime ["." Description]
 function splitAtPeriod(input) {
 	
 	// Split description from rest of input	
@@ -50,7 +51,8 @@ function splitAtPeriod(input) {
 
 // Split the summary and date
 // DateTime -> (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime | (' from ' | ' between ') DateTimeRange
-function splitSummaryDate(input) {	
+function splitSummaryDate(input) {
+
 	// A separator can be found for Summary and DateTime
 	var summaryDateSeparator = false;
 	var splitted;
@@ -110,7 +112,6 @@ function splitSummaryDate(input) {
 	}	
 	eventSummary = splitted[0];
 	
-	
 	// Final output date error checks	
 	if (eventBegin.toString().search('Invalid Date') >= 0 )
 	eventBegin = error("Could not parse date-time value (Error T5)");
@@ -128,6 +129,7 @@ function splitSummaryDate(input) {
 
 // AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]
 function parseAbsoluteDateTime(input) {
+
 	// If date is missing altogether, reject
 	if (!input || input == " ")
 	return error("Could not find a date value (Error D1)");
@@ -509,4 +511,4 @@ module.exports = {
 	getEventEnd,
 	getEventDescription,
 	getEventSummary
-}	
+}
