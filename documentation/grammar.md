@@ -4,8 +4,8 @@
 S -> Summary DateTime ["." Description]
 Summary -> [ Word ]+
 DateTime -> (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime | (' from ' | ' between ') DateTimeRange
-AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) 'at' (AbsoluteTime | RelativeTime)
-RelativeDateTime -> RelativeDate (' at ' | ' in the ') (AbsoluteTime | RelativeTime)
+AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]
+RelativeDateTime -> RelativeDate [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]
 DateTimeRange -> AbsoluteDateTime (' - ' | ' to ' | ' and ') AbsoluteDateTime
 RelativeDate -> 'tomorrow' | 'today' | (('this' | 'next')  DayOfWeek)
 DayOfWeek -> 'Mon' ['day'] | ... | 'Sun' ['day']
@@ -14,7 +14,7 @@ MonthNumber -> 1 | ... | 12
 MonthName -> 'Jan' [ 'uary' ] | ... | 'Dec' [ 'ember' ]
 Year -> ( 1900 | ... | 2999 ) | ( 00 | ... | 99 )
 AbsoluteTime -> MonthNumber ('am'| 'pm')
-RelativeTime -> Morning | Afternoon | Evening | Night
+RelativeTime -> Morning | Noon | Afternoon | Evening | Night
 Description -> [ Word ]*
 Word -> [a-zA-Z0-9]+ | '!' | '?' | ' ' | '-' | '_' | ...
 ```
@@ -22,6 +22,3 @@ Word -> [a-zA-Z0-9]+ | '!' | '?' | ' ' | '-' | '_' | ...
 TODO: 
 - Word strings must not include reserved words like 'tomorrow'?
 - Add RelativeDateTime to DateTimeRange
-- Add productions for Morning, Afternoon, Evening, and Night
-- Update timing productions based on recent additions to the code
-- Add smaller productions to docmentation

@@ -13,6 +13,12 @@ var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur
 var relativeDate = "\\b(tom(?:orrow)?|tmrw|today|next|this)\\b";
 var dateTimeRange = "\\b((-)|(to)|(and))\\b"; //no spaces needed b/c \\b
 
+// Global Constants
+const defaultTimeMorning = 9;;
+const defaultTimeAfternoon = 13;
+const defaultTimeEvening = 17;
+const defaultTimeNight = 21;
+
 
 // Function to show recognized fields in real time (not necessarily in exact iCal format). Runs whenever user's input changes.
 function liveUpdate() {
@@ -331,11 +337,11 @@ function timeDecision(date, input) {
 	
 	// RelativeTime -> Morning | Afternoon | Evening | Night
 	if (input.search('morning') >= 0) {
-		date.setHours(9, 0, 0);
+		date.setHours(defaultTimeMorning, 0, 0);
 		return date;
 	} 
 	else if (input.search('afternoon') >= 0) {
-		date.setHours(13, 0, 0);
+		date.setHours(defaultTimeAfternoon, 0, 0);
 		return date;
 	} 
 	else if (input.search('noon') >= 0) {
@@ -343,11 +349,11 @@ function timeDecision(date, input) {
 		return date;
 	} 
 	else if (input.search('evening') >= 0) {
-		date.setHours(17, 0, 0);
+		date.setHours(defaultTimeEvening, 0, 0);
 		return date;
 	} 
 	else if (input.search('night') >= 0) {
-		date.setHours(21, 0, 0);
+		date.setHours(defaultTimeNight, 0, 0);
 		return date;
 	}
 	
