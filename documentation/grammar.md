@@ -13,11 +13,10 @@ DayOfMonth -> 1 | ... | 31
 MonthNumber -> 1 | ... | 12
 MonthName -> 'Jan' [ 'uary' ] | ... | 'Dec' [ 'ember' ]
 Year -> ( 2002 | ... | 2999 ) | ( 02 | ... | 99 )
-AbsoluteTime -> MonthNumber ('am'| 'pm')
-RelativeTime -> Morning | Noon | Afternoon | Evening | Night
+AbsoluteTime -> HourTime:MinuteTime [" "] ('am'| 'pm')
+HourTime -> 1 | ... | 12
+MinuteTime -> 1 | ... | 60
+RelativeTime -> 'morning' | 'noon' | 'afternoon' | 'evening' | 'night'
 Description -> [ Word ]*
 Word -> [a-zA-Z0-9]+ | '!' | '?' | ' ' | '-' | '_' | ...
 ```
-
-TODO: 
-- Add RelativeDateTime to DateTimeRange
