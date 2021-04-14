@@ -169,10 +169,13 @@ function parseAbsoluteDateTime(input) {
 			return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
 		}
 	}
+
 	
 	// If a time value is also provided, parse that separately and return.
 	if (allDay == 0)
 	date = timeDecision(date, splitted[1]);
+
+	console.log(date)
 	return date;
 }
 
@@ -289,6 +292,7 @@ function timeDecision(date, input) {
 		
 		if (parsedTime[0].search(':') >= 0)
 		parsedTime = parsedTime[0].split(':');
+		console.log(parsedTime)
 		
 		// Test to ensure time has hour value at minimum
 		if (!parsedTime[0] || parsedTime[0] == " ")
@@ -296,7 +300,7 @@ function timeDecision(date, input) {
 		
 		if ((parsedTime[0] < 1) || (parsedTime[0] > 12))
 		return error("Hour value of time <i>" + input + "</i> not in expected range (Error T2)");
-		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? 12 : 0), 0, 0); }
+		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? -12 : 0), 0, 0); }
 		catch { return "Could not parse <i>" + input + "</i> as time (Error T1)"; }
 		
 		// If minutes were provided, parse
