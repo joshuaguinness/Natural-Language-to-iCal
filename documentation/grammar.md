@@ -1,7 +1,7 @@
 #### Production rules for input string
 
 ```
-S ->                Summary DateTime ["." Description]​
+S ->                Summary DateTime [". " Description]​
 Summary ->          [ Word ]+​
 DateTime ->         (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] ​
                     RelativeDateTime | (' from ' | 'between ') DateTimeRange​
