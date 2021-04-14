@@ -418,15 +418,18 @@ test("timeDecision: relative time", () => {
         "morning",
         "afternoon",
         "evening",
-        "night"
+        "night",
+        "noon"
     ];
     const date = new Date();
     let expected = new Date();
 
-    for(let i = 0; i < relativeTimes.length; i++) {
-        expected.setHours(9 + i*4, 0, 0);
+    for(let i = 0; i < relativeTimes.length - 1; i++) {
+        expected.setHours(9 + i*4, 0, 0); console.log(relativeTimes[i]);
         expect(parser.timeDecision(date, relativeTimes[i]).toTimeString()).toBe(expected.toTimeString())
     }
+    expected.setHours(12, 0, 0);
+    expect(parser.timeDecision(date, relativeTimes[relativeTimes.length - 1]).toTimeString()).toBe(expected.toTimeString())
 })
 
 test("timeDecision: invalid \"am\" and \"pm\"", () => {
