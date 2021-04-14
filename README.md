@@ -9,16 +9,27 @@ Users are able to easily create new calendar events using only their keyboard, p
 
 For example, natural language user input such as the following:
 ```js
-Discuss group project at 4pm next mon. Bring notes
+Discuss project on monday at 4pm. Bring notes
 ```
 Would be converted to a structured format similar to:
 ```js
-SUMMARY Discuss group project
-DATE Monday, April 5 2021, 4:00PM EST
-DESCRIPTION: Bring Notes
+BEGIN:VCALENDAR​
+PRODID:Calendar​
+VERSION:2.0​
+BEGIN:VEVENT​
+UID:0@default​
+CLASS:PUBLIC​
+DTSTAMP;VALUE=DATE-TIME:20210413T042828​
+DTSTART;VALUE=DATE-TIME:20210419T160000​
+DTEND;VALUE=DATE-TIME:20210419T170000​
+SUMMARY;LANGUAGE=en-us:Discuss project​
+DESCRIPTION:Bring notes​
+TRANSP:TRANSPARENT​
+END:VEVENT​
+END:VCALENDAR​
 ```
 
-The system parses the input and displays recognized fields in a user friendly, non-iCalendar format on the page in real time. Pressing Enter then generates an .ics event file, which can be imported into almost any calendar application.
+The system first parses the input and displays recognized fields in a user friendly, non-iCalendar format on the page in real time. Pressing Enter then generates an .ics event file, which can be imported into almost any calendar application.
 
 ### How to Run
 To access the demonstration page, download the contents of the `code` directory then open `index.html` in a web browser. There are two ways to use the demo page:
@@ -46,3 +57,6 @@ To run the jest unit testing, run the following from the root directory:
 ```
 npm run test
 ```
+
+### More Information
+For additional details on our project, please refer to the project proposal and accompanying files in the `documentation` directory.
