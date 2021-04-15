@@ -52,7 +52,7 @@ function splitAtPeriod(input) {
 // Split the summary and date
 // DateTime -> (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] RelativeDateTime | (' from ' | ' between ') DateTimeRange
 function splitSummaryDate(input) {
-
+	
 	// A separator can be found for Summary and DateTime
 	var summaryDateSeparator = false;
 	var splitted;
@@ -129,7 +129,7 @@ function splitSummaryDate(input) {
 
 // AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]
 function parseAbsoluteDateTime(input) {
-
+	
 	// If date is missing altogether, reject
 	if (!input || input == " ")
 	return error("Could not find a date value (Error D1)");
@@ -302,12 +302,13 @@ function timeDecision(date, input) {
 		catch { return "Could not parse <i>" + input + "</i> as time (Error T1)"; }
 		
 		// If minutes were provided, test and parse separately 
-		if (parsedTime[1]) {
-			if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
-			return error("Minute value of time <i>" + input + "</i> not in expected range (Error T8)");
-			try { date.setMinutes(parseInt(parsedTime[1])); }
-			catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
-		}
+		if (!parsedTime[1] || parsedTime[1] == " ")
+		parsedTime[1] = 0;
+		if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
+		return error("Minute value of time <i>" + input + "</i> not in expected range (Error T8)");
+		try { date.setMinutes(parseInt(parsedTime[1])); }
+		catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
+		
 		return date;
 	} 
 	else if (input.search('pm') >= 0) {
@@ -325,18 +326,18 @@ function timeDecision(date, input) {
 		return error("Time <i>" + input + "</i> is missing hour component (Error T7)");		
 		
 		if ((parsedTime[0] < 1) || (parsedTime[0] > 12))
-		return error("Hour value of time <i>" + input + "</i> not in expected range (Error T2)");
-		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? 0 : 12), 0, 0); }
+	return error("Hour value of time <i>" + input + "</i> not in expected range (Error T2)");
+	try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? 0 : 12), 0, 0); }
+	catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
+	
+	// If minutes were provided, parse
+	if (parsedTime[1]) {
+		if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
+		return error("Minute value of time <i>" + input + "</i> not in expected range (Error T8)");
+		try { date.setMinutes(parseInt(parsedTime[1])); }
 		catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
-		
-		// If minutes were provided, parse
-		if (parsedTime[1]) {
-			if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
-			return error("Minute value of time <i>" + input + "</i> not in expected range (Error T8)");
-			try { date.setMinutes(parseInt(parsedTime[1])); }
-			catch { return error("Could not parse <i>" + input + "</i> as time (Error T1)"); }
-		}
-		return date;
+	}
+	return date;
 	}
 	
 	// RelativeTime -> Morning | Afternoon | Evening | Night
