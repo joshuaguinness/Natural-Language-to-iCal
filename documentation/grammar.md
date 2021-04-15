@@ -11,7 +11,7 @@ AbsoluteDateTime -> ( ( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOf
 RelativeDateTime -> RelativeDate [ (' at ' | ' in the ') ( AbsoluteTime | RelativeTime ) ]​
 DateTimeRange ->    AbsoluteDateTime ( ' - ' | ' to ' | ' and ' ) AbsoluteDateTime​
 RelativeDate ->     'tomorrow' | 'today' | ( ( 'this' | 'next' ) DayOfWeek )​
-AbsoluteTime ->     HourTime ':' MinuteTime [' '] ( 'am'| 'pm' )
+AbsoluteTime ->     HourTime [ ':' MinuteTime] [ ' ' ] ( 'am'| 'pm' )
 DayOfWeek ->        'Mon' [ 'day' ] | ... | 'Sun' [ 'day' ]​
 DayOfMonth ->       1 | ... | 31​
 MonthNumber ->      1 | ... | 12​
