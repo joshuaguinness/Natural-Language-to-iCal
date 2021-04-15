@@ -67,7 +67,7 @@
 **Description:** Generate properly formatted .ICS file (once user hits enter or clicks download btn. Arg 1 = download, arg 0 = view only.
 
 #### formatHTML
-**Input:** eventSummary : String, summary of calendar event | eventBegin : Date, start of the event | eventEnd : Date, end of the event | eventDescription : String, Additional description of the event \ 
+**Input:** eventSummary : String, summary of calendar event | eventBegin : Date, start of the event | eventEnd : Date, end of the event | eventDescription : String, Additional description of the event \
 **Output:** output : HTML, formatted output \
 **Description:** Format live output HTML
 
