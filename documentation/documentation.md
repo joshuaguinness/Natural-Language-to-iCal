@@ -1,10 +1,13 @@
 # Software Documentation
 
+The documentation serves to function as a tool for readers to better understand the implementation details, specifically how the functions work. Each function in the `parser.js` file is listed, and info is provided about its inputs, outputs, and purpose. An example is below.
+
 **Function Name** \
 **Input(s):** (list of input: type, description of parameter)\
 **Output:** (type, description of output)\
 **Description:** (summary of what function does)\
 **Details:** (Optional detailed description of how function works)
+**Associated Production(s):** (Optional production that the function is associated with)
 
 ## parser.js
 
@@ -26,7 +29,7 @@
 **Input:** input : string, date to parse \
 **Output:** date: Date, to be displayed \
 **Description:** Creates a Date object using the input into the function and returns that Date object. Has error handling and additional code for constructing the date from user input should the user provide incorrect input. \
-**Associated Production(s):** `AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]`
+**Associated Production(s):** `AbsoluteDateTime -> (( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) | DayOfMonth '/' MonthNumber [ '/' Year ]) ['at' (AbsoluteTime | RelativeTime)]`, `DayOfMonth -> 1 | ... | 31​`, `MonthNumber -> 1 | ... | 12​`, `MonthName -> 'Jan' [ 'uary' ] | ... | 'Dec' [ 'ember' ]`, `Year -> ( 2002 | ... | 2999 ) | ( 00 | ... | 99 )​​`
 
 #### parseRelativeDateTime
 **Input:** input : string, date to parse \
@@ -44,13 +47,13 @@
 **Input:** date : Date, date being processed | dayMatchArray : Array, input matched by `regExDayofWeek` | referenceDate : Date, current date \
 **Output:** date : Date, updated date based on day of week \
 **Description:** Finds the matching day of the week that the input is referring to and updates the date with that proper day. \
-**Associated Production(s):** None
+**Associated Production(s):** `DayOfWeek -> 'Mon' [ 'day' ] | ... | 'Sun' [ 'day' ]`​
 
 #### timeDecision
 **Input:** date : Date, date being processed | input : String, date to be parsed \
 **Output:** date : Date, date with the correct time \
 **Description:** Processes the time portion of the input and corrects the date with the current time. Supports absolute times as well as relative time (e.g. morning, night). \
-**Assocaited Production(s):** `AbsoluteTime -> MonthNumber ('am'| 'pm')`, `RelativeTime -> Morning | Afternoon | Evening | Night`
+**Assocaited Production(s):** `AbsoluteTime -> HourTime [ ':' MinuteTime] [ ' ' ] ( 'am'| 'pm' )`, `RelativeTime -> 'morning' | 'noon' | 'afternoon | 'evening' | 'night'​`, `HourTime -> 1 | ... | 12​`, `MinuteTime -> 1 | ... | 60​`
 
 ---
 
