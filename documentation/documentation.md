@@ -6,7 +6,7 @@ The documentation serves to function as a tool for readers to better understand 
 **Input(s):** (list of input: type, description of parameter)\
 **Output:** (type, description of output)\
 **Description:** (summary of what function does)\
-**Details:** (Optional detailed description of how function works)
+**Details:** (Optional detailed description of how function works) \
 **Associated Production(s):** (Optional production that the function is associated with)
 
 ## parser.js
@@ -88,3 +88,13 @@ The documentation serves to function as a tool for readers to better understand 
 **Input:** None \
 **Output:** None \
 **Description:** Automatically fills input using URL parameter and generates file immediately.
+
+#### sampleInput
+**Input:** testNum : Integer, sample number that the user clicked on \
+**Output:** None \
+**Description:** Fills input with sample text based on which sample button the user clicked.
+
+#### typeWriter
+**Input:** None \
+**Output:** None \
+**Description:** Animation of text on the frontend.
