@@ -6,7 +6,7 @@ Summary ->          [ Word ]+​
 DateTime ->         (' on ' | ' by ') AbsoluteDateTime | [' on ' | ' by '] ​
                     RelativeDateTime | (' from ' | 'between ') DateTimeRange​
 AbsoluteDateTime -> ( ( DayOfMonth MonthName [Year] ) | ( [Year] MonthName DayOfMonth ) ​
-                    | DayOfMonth '/’ MonthNumber [ '/' Year ] ) ​
+                    | DayOfMonth '/' MonthNumber [ '/' Year ] ) ​
                     [ 'at' ( AbsoluteTime | RelativeTime ) ]​
 RelativeDateTime -> RelativeDate [ (' at ' | ' in the ') ( AbsoluteTime | RelativeTime ) ]​
 DateTimeRange ->    AbsoluteDateTime ( ' - ' | ' to ' | ' and ' ) AbsoluteDateTime​
