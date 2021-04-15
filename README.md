@@ -57,5 +57,13 @@ Then, to perform the tests, run the following from the root directory:
 npm run test
 ```
 
+### Resources Used
+- iCalendar Specification (RFC 5545) - Information on the .ics event file format and fields​ (https://icalendar.org/RFC-Specifications/iCalendar-RFC-5545/​)
+- Mozilla Developer Network Documentation – JavaScript functions, syntax and programming​ (https://developer.mozilla.org/en-US/docs/Web/JavaScript​)
+- Jest – JavaScript testing framework​ (https://jestjs.io/​)
+- COMP SCI 4TB3 Lecture Notes – Languages, grammars, regular expressions​ (Emil Sekerinski, McMaster University​)
+- ics.js - Builds .ics file once the input has been processed by the parser​ (https://github.com/nwcell/ics.js/​)
+- Pure CSS – Styles the demo web page ​(https://purecss.io/)
+
 ### More Information
 For additional details on our project, please refer to the project proposal, slides, and accompanying files in the `documentation` directory.
