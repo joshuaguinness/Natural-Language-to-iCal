@@ -11,7 +11,7 @@ The documentation serves to function as a tool for readers to better understand 
 
 ## parser.js
 
-### **Functions associated with the grammar**
+#### Functions associated with the grammar
 
 #### splitAtPeriod
 **Input:** input : string, string to be split \
@@ -83,6 +83,10 @@ The documentation serves to function as a tool for readers to better understand 
 **Input:** errorString : String, error to be output \
 **Output:** error : HTML, error to be displayed \
 **Description:** Format error strings in red and mark input as no good.
+
+
+## resources/supporting.js
+#### Supporting functions unrelated to language processing
 
 #### onLoad
 **Input:** None \
