@@ -10,7 +10,7 @@ var speed = 10;
 function sampleInput(testNum) {	
 	var testStrings = ['Meet with group by next saturday at 11:30 am',
 		'Complete project by Wed Apr 14 at night. Submit everything on Gitlab',
-		'Project presentation from 4/16 at 10:30am to 4/16 at 10:40am. Prep slides',
+		'Project presentation from 4/16/21 at 10:30am to 4/16/21 at 10:40am. Prep slides',
 		'This is an unacceptable input  Fri at whenever. Summary-date separator is missing',
 		'This is invalid from Appr 27 at 8:23pm to mon at 2a2:03pm. Due to bad dates',
 	'This is no good between 5/4-4/28. Because of the invalid date range'];
