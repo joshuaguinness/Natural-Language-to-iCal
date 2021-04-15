@@ -29,13 +29,13 @@
 			<div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-3-8">
 				<img width="300" class="pure-img-responsive" src="resources/logo.png">
 			</div>
-			<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-6-8">
+			<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-5-8">
 				<!-- Main user interaction area w/ input textbox and controls --> 
 				<h2 class="content-head content-head-ribbon">COMP SCI 4TB3 Project Demo</h2>
 				<p>	Type your event information to view a real-time conversion, or try one of the samples. </p>
 				
 				<form class="pure-form">
-					<!-- Input textbox. When text changes, run liveUpdate function. Intercept Enter (keyCode 13) to run .ics generation rather than form submit --> 
+					<!-- Input textbox. When text changes, run liveUpdate function. Intercept Enter (keyCode 13) to run .ics generation rather than submit form --> 
 					<input type="text" id="userInput" class="pure-form pure-input-rounded" placeholder="Enter something!" size="50" oninput="liveUpdate()" autofocus onkeydown = "if (event.keyCode == 13) { generateICS(1); event.preventDefault();}">
 					
 					<!-- Selection of valid and invalid sample inputs for development & testing --> 
@@ -50,8 +50,7 @@
 				
 				<!-- Live Update output section hidden by default and when input is blank --> 
 				<div id="output" hidden>			
-					<ul id="liveOutput">
-					</ul>
+					<ul id="liveOutput"> </ul>
 					<p id="helpText"> </p>
 					<button type="button" id="btnDownload" class="pure-button pure-button-primary" onclick="generateICS(1)">Download .ics</button>
 					<button type="button" id="btnPreview" class="pure-button pure-button-primary" onclick="generateICS(0)">Preview .ics</button>
