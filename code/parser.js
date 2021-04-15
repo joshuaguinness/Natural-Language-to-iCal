@@ -239,6 +239,7 @@ function parseDateTimeRange(input) {
 }
 
 // Parses day of week name from input, returns date of closest upcoming matching day 
+// DayOfWeek -> 'Mon' [ 'day' ] | ... | 'Sun' [ 'day' ]
 function setDateByDayOfWeek(date, dayMatchArray, referenceDate) {
 	dayOfWeek = dayMatchArray[0].toLowerCase();	
 	var date = new Date(); // Date Time to modify
@@ -279,7 +280,7 @@ function timeDecision(date, input) {
 	var parsedTime;	
 	allDay = 0; // If time is provided, no longer an all-day event
 	
-	// AbsoluteTime -> MonthNumber ('am'| 'pm')
+	// AbsoluteTime -> HourTime [ ':' MinuteTime] [ ' ' ] ( 'am'| 'pm' )
 	if (input.search('am') >= 0) {
 		parsedTime = input.split('am');
 		
@@ -340,7 +341,7 @@ function timeDecision(date, input) {
 	return date;
 	}
 	
-	// RelativeTime -> Morning | Afternoon | Evening | Night
+	// RelativeTime -> 'morning' | 'noon' | 'afternoon | 'evening' | 'night'​
 	if (input.search('morning') >= 0) {
 		date.setHours(defaultTimeMorning, 0, 0);
 		return date;
