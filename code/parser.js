@@ -1,17 +1,17 @@
 // Main program code for COMP SCI 4TB3 Group 9 Project - Natural Language to iCalendar converter.
 // Open index.html in a web browser for demo page. The resources directory contains supporting files/frameworks/libraries.
-// This program makes use of the following open source libraries and frameworks: ics.js, pure.io.
+// This program makes use of the following open source libraries and frameworks: ics.js, purecss.io.
 // ==========================================================
 
 // Global variables
-var eventSummary, eventBegin, eventEnd, eventDescription; // Vars for event field data
+var eventSummary, eventBegin, eventEnd, eventDescription; // Vars for parsed event field data
 var inputGood; // Whether user's input is acceptable
 var allDay; // Track whether event is an all-day event (no time specified)
 
 // Patterns to match from user's input
 var regExDayofWeek = "\\b(sun|mon|tue(?:s)?|wed(?:nes)?|thu(?:rs?)?|fri|sat(?:ur)?)(?:day)?\\b";
 var relativeDate = "\\b(tom(?:orrow)?|tmrw|today|next|this)\\b";
-var dateTimeRange = "\\b((-)|(to)|(and))\\b"; //no spaces needed b/c \\b
+var dateTimeRange = "\\b((-)|(to)|(and))\\b";
 
 // Global Constants
 const defaultTimeMorning = 9;;
@@ -37,8 +37,8 @@ function liveUpdate() {
 	document.getElementById("liveOutput").innerHTML = formatHTML(eventSummary, eventBegin, eventEnd, eventDescription);
 }
 
-// Split input string at "."
-// S -> Summary DateTime ["." Description]
+// Split input string at ". "
+// S -> Summary DateTime [". " Description]
 function splitAtPeriod(input) {
 	
 	// Split description from rest of input	
@@ -142,8 +142,7 @@ function parseAbsoluteDateTime(input) {
 	
 	// Try to initially create a Date Time object using input as-is (assume user has provided full date incl year)
 	var date = new Date(splitted[0]);
-	// alert(dateAttempt.getFullYear())
-	if ((date == 'Invalid Date') || (date.getFullYear() < 2002)) {
+	if ((date == 'Invalid Date') || (date.getFullYear() < 2002)) { // Workaround for Chromium-based browsers defaulting to 2001/2002 without explicit year
 		console.log("Trying to parse date as-provided failed:\n" + splitted[0] + " -> " + date);
 		
 		// If can't parse as-provided, insert current year and retry (in case user entered 01/23 or Jan 23 with implied year)
@@ -152,7 +151,7 @@ function parseAbsoluteDateTime(input) {
 		// Adding year and parsing was successful if the input had at least one digit and the output is a valid date.
 		// Now check to see if the date has already passed this year, and if so, change implied year to be next year
 		if (date != 'Invalid Date' && (/\d/.test(splitted[0]))) {
-			console.log("Trying with current year added worked:\n" + splitted[0] + " " + referenceDate.getFullYear() + " -> " + date);
+			console.log("Trying with implied current year added worked:\n" + splitted[0] + " " + referenceDate.getFullYear() + " -> " + date);
 			if (date < referenceDate) {
 				date.setFullYear(referenceDate.getFullYear() + 1);
 				console.log("But that date has passed, so assuming next year:\n" + date);
@@ -160,8 +159,7 @@ function parseAbsoluteDateTime(input) {
 		}
 		else {
 			// If adding implied year still didn't work, try to parse input as a relative date instead (tomorrow, friday, etc)
-			console.log("Trying with current year added also failed:\n" + splitted[0] + " " + referenceDate.getFullYear() + " -> " + date);
-			
+			console.log("Trying with implied current year added also failed:\n" + splitted[0] + " " + referenceDate.getFullYear() + " -> " + date);			
 			dayMatchArray = splitted[0].toLowerCase().match(regExDayofWeek);	
 			if (dayMatchArray)
 			date = setDateByDayOfWeek(splitted[0], dayMatchArray, referenceDate);
@@ -169,13 +167,10 @@ function parseAbsoluteDateTime(input) {
 			return error("Could not parse <i>" + input + "</i> as a date (Error D2)"); // Date is unrecognizable
 		}
 	}
-
 	
 	// If a time value is also provided, parse that separately and return.
 	if (allDay == 0)
 	date = timeDecision(date, splitted[1]);
-
-	console.log(date)
 	return date;
 }
 
@@ -187,6 +182,7 @@ function parseRelativeDateTime(input) {
 	const referenceDate = new Date(); // Reference Date	
 	input = input.toLowerCase();
 	
+	// Pattern match relative date keywords
 	if (input.match('\\b(tom(?:orrow)?|tmrw)\\b')) {
 		console.log("Matched tomorrow");
 		date.setDate(date.getDate() + 1);
@@ -195,6 +191,7 @@ function parseRelativeDateTime(input) {
 		console.log("Matched today");
 		date.setDate(date.getDate());
 	} 
+	// Pattern match relative date modifier keywords
 	else if (input.match('\\b(this)\\b')) {
 		dayMatchArray = input.match(regExDayofWeek)
 		try { date = setDateByDayOfWeek(date, dayMatchArray, referenceDate); }
@@ -209,7 +206,7 @@ function parseRelativeDateTime(input) {
 	
 	// [(' at ' | ' in the ') (AbsoluteTime | RelativeTime)]
 	var splitted;
-	
+	// Scan for date-time separator keywords and parse time separately
 	if (input.search(' at ') >= 0) {
 		splitted = input.split(' at ');
 		date = timeDecision(date, splitted[1]);
@@ -227,7 +224,7 @@ function parseRelativeDateTime(input) {
 
 // DateTimeRange -> AbsoluteDateTime ('-' | ' to ' | ' and ') AbsoluteDateTime
 function parseDateTimeRange(input) {	
-	// Match the regex and split on that match
+	// Pattern match date range separator keywords w/ regex and parse two dates separately
 	rangeMatch = input.match(dateTimeRange);
 	splitted = input.split(rangeMatch[0]);
 	
@@ -246,7 +243,7 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate) {
 	dayOfWeek = dayMatchArray[0].toLowerCase();	
 	var date = new Date(); // Date Time to modify
 	
-	// Match day of week from input w/ regex
+	// Pattern match day of week from input w/ regex
 	// DayOfWeek -> 'Mon' ['day'] | ... | 'Sun' ['day']
 	if (dayOfWeek.match('\\b(sun)(?:day)?\\b'))
 	numberOfWeek = 0;
@@ -265,6 +262,7 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate) {
 	else
 	numberOfWeek = -1;	
 	
+	// Create date object for matched day of week
 	if (numberOfWeek == -1)
 	return error("Could not parse <i>" + dayOfWeek + "</i> as a relative date (Error D5)"); // Should not occur since input is checked against regex beforehand
 	else if (numberOfWeek > referenceDate.getDay())
@@ -275,26 +273,26 @@ function setDateByDayOfWeek(date, dayMatchArray, referenceDate) {
 }
 
 // Sets the time depending on input
-function timeDecision(date, input) {	
-	allDay = 0;
-	
+function timeDecision(date, input) {
 	try { input = input.toLowerCase(); }
 	catch { return error("Could not parse <i>" + input + "</i> as date with time (Error T4)") }
-	var parsedTime;
+	var parsedTime;	
+	allDay = 0; // If time is provided, no longer an all-day event
 	
 	// AbsoluteTime -> MonthNumber ('am'| 'pm')
 	if (input.search('am') >= 0) {
 		parsedTime = input.split('am');
 		
-		// Test for invalid chars in time
+		// Test for invalid characters in time w/regex
 		if (/[a-zA-Z]/.test(parsedTime[0]))
 		return error("Time <i>" + input + "</i> is invalid or contains unexpected characters (Error T6)");	
 		
+		// Scan for optional colon and split hour from minute if found
 		if (parsedTime[0].search(':') >= 0)
 		parsedTime = parsedTime[0].split(':');
 		console.log(parsedTime)
 		
-		// Test to ensure time has hour value at minimum
+		// Test to ensure time has an hour value and that it's valid
 		if (!parsedTime[0] || parsedTime[0] == " ")
 		return error("Time <i>" + input + "</i> is missing hour component (Error T7)");		
 		
@@ -303,7 +301,7 @@ function timeDecision(date, input) {
 		try { date.setHours(parseInt(parsedTime[0]) + ((parsedTime[0] == 12) ? -12 : 0), 0, 0); }
 		catch { return "Could not parse <i>" + input + "</i> as time (Error T1)"; }
 		
-		// If minutes were provided, parse
+		// If minutes were provided, test and parse separately 
 		if (parsedTime[1]) {
 			if ((parsedTime[1] < 0) || (parsedTime[1] > 59))
 			return error("Minute value of time <i>" + input + "</i> not in expected range (Error T8)");
@@ -472,14 +470,13 @@ function onLoad() {
 var i = 0;
 var txt;
 var speed = 10;
-
 function sampleInput(testNum) {	
-	var testStrings = ['Complete project by Wed Apr 14 at 9:30 pm. Submit everything on Gitlab',
+	var testStrings = ['Meet with group by next saturday at 11:30 am',
+		'Complete project by Wed Apr 14 at night. Submit everything on Gitlab',
 		'Project presentation from 4/16 at 10:30am to 4/16 at 10:40am. Prep slides',
-		'Meet with group by next saturday in the morning',
-		'This is an invalid input because there is no date or time.',
-		'This is also invalid from Appr 27 8:23 pm to mon at 2a2:03 pm. Due to bad date values',
-	'This is no good either between 1/31-12/30. Because of the invalid date range'];
+		'This is an unacceptable input  Fri at whenever. Summary-date separator is missing',
+		'This is invalid from Appr 27 at 8:23pm to mon at 2a2:03pm. Due to bad dates',
+	'This is no good between 5/4-4/28. Because of the invalid date range'];
 	
 	i = 0;
 	document.getElementById("userInput").value = "";
