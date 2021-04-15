@@ -341,7 +341,7 @@ function timeDecision(date, input) {
 	return date;
 	}
 	
-	// RelativeTime -> 'morning' | 'noon' | 'afternoon | 'evening' | 'night'​
+	// RelativeTime -> 'morning' | 'noon' | 'afternoon' | 'evening' | 'night'​
 	if (input.search('morning') >= 0) {
 		date.setHours(defaultTimeMorning, 0, 0);
 		return date;
