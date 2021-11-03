@@ -2,6 +2,8 @@
 # Natural Language to iCalendar Converter 
 _Group 9: Joshua Guinness, Arkin Modi, Jason Kim_
 
+Website: https://jasonk.im/ical/
+
 ### Project Overview
 This repository hosts the code and accompanying documentation for our group's language processor, which converts a user’s schedule information from a natural language input to an output in the standard [iCalendar](https://en.wikipedia.org/wiki/iCalendar) (.ics) format.
 
